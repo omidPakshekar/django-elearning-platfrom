@@ -1,10 +1,10 @@
 from django.db import models
 from django.conf import settings
+from .fields import OrderField
 
-
-class Subject(models.Model):
+class Category(models.Model):
     title       = models.CharField(max_length=50)
-    slug    = models.SlugField(max_length = 200, unique=True)
+    slug        = models.SlugField(max_length = 200, unique=True)
 
     class Meta:
         ordering = ('title',)
@@ -15,15 +15,28 @@ class Subject(models.Model):
 
 
 class Course(models.Model):
-    owner   = models.ForeignKey(settings.AUTH_USER_MODEL, related_name = 'courses_created', on_delete=models.CASCADE)
-    subject = models.ForeignKey(Subject, related_name='courses', on_delete=models.CASCADE)
-    title   = models.CharField(max_length=100)
-    slug    = models.SlugField(max_length=200, unique=True)
-    overview= models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    students = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='course_joined', blank=True)
+    owner     = models.ForeignKey(settings.AUTH_USER_MODEL, related_name = 'courses_created', on_delete=models.CASCADE)
+    category  = models.ForeignKey(Category, related_name='courses', on_delete=models.CASCADE)
+    title     = models.CharField(max_length=100)
+    slug      = models.SlugField(max_length=200, unique=True)
+    overview  = models.TextField()
+    created   = models.DateTimeField(auto_now_add=True)
+    students  = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='course_joined', blank=True)
+    
     class Meta:
         ordering = ('-created',)
 
     def __str__(self):
         return self.title
+
+class Module(models.Model):
+    course      = models.ForeignKey(Course, related_name='modules', on_delete=models.CASCADE)
+    title       = models.CharField(max_length=200)
+    description = models.TextField(blank = True)
+    order       = OrderField(blank=True, for_fields=['course'])
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return '{}. {}'.format(self.order, self.title)
