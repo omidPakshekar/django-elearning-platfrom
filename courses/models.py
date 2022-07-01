@@ -5,6 +5,14 @@ from django.contrib.contenttypes.fields import ContentType, GenericForeignKey
 
 User = settings.AUTH_USER_MODEL
 
+
+def get_course_image_filepath(self, filename):
+    return f'courses/{self.title + ".png"}'
+
+def get_default_image():
+    return "courses/default_image.jpg"
+
+
 class Category(models.Model):
     title       = models.CharField(max_length=50)
     slug        = models.SlugField(max_length = 200, unique=True)
@@ -20,6 +28,7 @@ class Category(models.Model):
 class Course(models.Model):
     owner     = models.ForeignKey(User, related_name = 'courses_created', on_delete=models.CASCADE)
     category  = models.ForeignKey(Category, related_name='courses', on_delete=models.CASCADE)
+    photo     = models.ImageField(upload_to=get_course_image_filepath, null=True, blank=True, default=get_default_image)    
     title     = models.CharField(max_length=100)
     slug      = models.SlugField(max_length=200, unique=True)
     overview  = models.TextField()
