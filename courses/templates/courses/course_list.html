@@ -15,12 +15,15 @@
          <div class="row">
           {% for object in object_list %}
             <div class="col-md-6">
-               <div style="height:90%; width:100%;" class="image_main">
-                  <img style="height:100%;" src="{{ object.photo.url }}">
-                  <div class="text_main">
-                     <div class="seemore_text"> {{object.title}} </div>
-                  </div>
-               </div>
+               <a href="{% url 'courses:course-detail' pk=object.pk %}">
+                <div style="height:90%; width:100%;" class="image_main">
+                        
+                        <img style="height:100%;" src="{{ object.photo.url }}">
+                        <div class="text_main">
+                           <div class="seemore_text"> {{object.title}} </div>
+                        </div>
+                     </div>
+               </a>
             </div>
         {% endfor %}
          </div>

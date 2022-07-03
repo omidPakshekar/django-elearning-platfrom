@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+<div class="services_section layout_padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <img src="{{object.photo.url}}">
+            </div>
+            <div class="col-md-3">
+                <h1>{{object.title}} course </h1>
+                <h2> overview </h2>
+                
+                <p> {{ object.modules.count }} modules.</p>
+                
+
+            </div>
+        </div> <!-- end row -->
+    </div>
+</div>
+
+{% endblock content %}
