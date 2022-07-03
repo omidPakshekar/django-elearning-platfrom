@@ -75,20 +75,24 @@
                </nav>
             </div>
          </div>
+      
       <!--banner section start -->
       {% block banner_section %}
 
       {% endblock banner_section %}
       <!--banner section end -->
-      </div>
+   </div>
+
       <!--header section end -->
       <!-- services section start -->
-      {% block content %}
+      <div class="container" >
+         {% block content %}
 
-      {% endblock content%}
+         {% endblock content%}
+      </div>
       <!-- contact section end -->
       <!-- footer section start -->
-      <div class="footer_section layout_padding" style="margin-bottom:0;">
+      <div class="footer_section layout_padding" style="margin-top:100px;">
          <div class="container">
             <div class="subscribe_bt"><a href="#">Subscribe</a></div>
             <input type="text" class="email_text" placeholder="Enter Your Email" name="Enter Your Email">

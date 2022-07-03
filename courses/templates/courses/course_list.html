@@ -1,14 +1,35 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block banner_section %}
+
+
+{% endblock banner_section %}
 
 {% block content %}
-    <div class="container">
-    {% for object in object_list %}
-        
-        <p> {{object.title }}</p>
-    
-    {% empty %}
-        <p> we don't have add course</p>
-    {% endfor %}
 
-    </div>
+<div class="services_section layout_padding">
+   <div class="container">
+      <h1 class="services_taital"><span style="color: #fcce2d">Our</span> Courses</h1>
+      <div class="services_section_2">
+         <div class="row">
+          {% for object in object_list %}
+            <div class="col-md-6">
+               <div style="height:90%; width:100%;" class="image_main">
+                  <img style="height:100%;" src="{{ object.photo.url }}">
+                  <div class="text_main">
+                     <div class="seemore_text"> {{object.title}} </div>
+                  </div>
+               </div>
+            </div>
+        {% endfor %}
+         </div>
+         
+      </div>
+   </div>            
+</div>
+<!-- services section end -->
+
 {% endblock content %}
+
+
