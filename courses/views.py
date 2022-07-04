@@ -2,6 +2,8 @@ from django.shortcuts import render, get_list_or_404
 from django.views.generic import ( ListView, DetailView,
                     TemplateView, CreateView, UpdateView,DeleteView)
 
+from students.forms import CourseEnrollForm
+
 
 from .models import Course 
 
@@ -16,4 +18,9 @@ class CourseListView(ListView):
 class CourseDetailView(DetailView):
     model = Course
     template_name = 'courses/course_detail.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["enroll_form"] = CourseEnrollForm(initial={'course' : self.object}) 
+        return context
     
