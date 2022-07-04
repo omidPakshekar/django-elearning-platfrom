@@ -14,7 +14,7 @@ def get_default_image():
 
 
 class Category(models.Model):
-    title       = models.CharField(max_length=50)
+    title       = models.CharField(max_length=50, db_index=True)
     slug        = models.SlugField(max_length = 200, unique=True)
 
     class Meta:
@@ -45,7 +45,7 @@ class Module(models.Model):
     course      = models.ForeignKey(Course, related_name='modules', on_delete=models.CASCADE)
     title       = models.CharField(max_length=200)
     description = models.TextField(blank = True)
-    order       = OrderField(blank=True, for_fields=['course'])
+    order       = OrderField(blank=True, for_fields=['course'], db_index=True)
 
     class Meta:
         ordering = ['order']
