@@ -43,7 +43,7 @@ class Dev(Configuration):
         'allauth',
         'allauth.account',
         'allauth.socialaccount',
-        
+        "debug_toolbar",
         
     ]
 
@@ -55,7 +55,11 @@ class Dev(Configuration):
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+
     ]
+    # debug tool bar
+    INTERNAL_IPS = ["127.0.0.1",]
 
     ROOT_URLCONF = 'django_elearning.urls'
 

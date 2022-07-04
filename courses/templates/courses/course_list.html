@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static cache %}
 
 {% block banner_section %}
 
@@ -7,6 +7,9 @@
 {% endblock banner_section %}
 
 {% block content %}
+
+{% cache 1200 "course_list" %}
+{% endcache  %}
 
 <div class="services_section layout_padding">
    <div class="container">
@@ -31,6 +34,7 @@
       </div>
    </div>            
 </div>
+
 <!-- services section end -->
 
 {% endblock content %}
