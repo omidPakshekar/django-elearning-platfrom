@@ -32,7 +32,7 @@ class Course(models.Model):
     title     = models.CharField(max_length=100)
     slug      = models.SlugField(max_length=200, unique=True)
     overview  = models.TextField()
-    created   = models.DateTimeField(auto_now_add=True)
+    created   = models.DateTimeField(auto_now_add=True, db_index=True)
     students  = models.ManyToManyField(User, related_name='course_joined', blank=True)
     
     class Meta:

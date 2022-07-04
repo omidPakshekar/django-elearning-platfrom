@@ -10,7 +10,10 @@ class CourseListView(ListView):
     template_name = 'courses/course_list.html'
     context_object_name = 'object_list'
 
+    def get_queryset(self):
+        return Course.objects.only('title', 'photo')
+    
 class CourseDetailView(DetailView):
     model = Course
     template_name = 'courses/course_detail.html'
-  
+    
