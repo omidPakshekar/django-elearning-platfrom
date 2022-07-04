@@ -9,6 +9,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('courses/', include('courses.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
+    path('students/', include('students.urls', namespace='students')),
     path('', include('homepage.urls'))
 ]
 

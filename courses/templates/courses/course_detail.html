@@ -14,9 +14,16 @@
                 
                 <p> {{ object.modules.count }} modules.</p>
                 
-
             </div>
         </div> <!-- end row -->
+        {% if request.user.is_authenticated %}
+            <form method="post" action="{% url 'students:student-enroll' %}">
+                {{ enroll_form }}
+                <input type="submit" name="" value="Enroll now">
+            </form>
+        {% else %}
+            <a class="btn btn-dark" href="{% url 'account_login' %}">login</a>
+        {% endif %}
     </div>
 </div>
 
