@@ -19,6 +19,7 @@
         {% if request.user.is_authenticated %}
             <form method="post" action="{% url 'students:student-enroll' %}">
                 {{ enroll_form }}
+                {% csrf_token %}
                 <input type="submit" name="" value="Enroll now">
             </form>
         {% else %}
