@@ -8,6 +8,12 @@ from django.urls import reverse_lazy
 from courses.models import Course
 
 
+class StudentQueryMixin(object):
+    def get_queryset(self):
+        qs = super(StudentQueryMixin, self).get_queryset()
+        return qs.filter(students__in=[self.request.user])
+
+
 class StudentEnrollCourseView(LoginRequiredMixin, FormView):
     form_class = CourseEnrollForm
     course = None 
@@ -20,16 +26,17 @@ class StudentEnrollCourseView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse_lazy('courses:course-list')
 
-class StudentCourseListView(LoginRequiredMixin, ListView):
+class StudentCourseListView(LoginRequiredMixin, ListView, StudentQueryMixin):
     model = Course 
     template_name = 'students/student_course_list.html'
 
-    def get_queryset(self):
-        qs = super(StudentCourseListView, self).get_queryset()
-        return qs.filter(students__in=[self.request.user])
+    
 
+# class StudentCourseDetailView(DetailView):
+#     model = Course 
+#     template_name = "students/course_detail.html"
 
-
-
-
+#     def get_queryset(self):
+#         qs = super(StudentCourseDetailView, self).get_queryset()
+#         return qs.filter(students__)
 
