@@ -1,4 +1,5 @@
 from msilib.schema import ListView
+from webbrowser import get
 from django.shortcuts import render
 from .forms import CourseEnrollForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -32,11 +33,8 @@ class StudentCourseListView(LoginRequiredMixin,StudentQueryMixin,  ListView):
 
     
 
-# class StudentCourseDetailView(DetailView):
-#     model = Course 
-#     template_name = "students/course_detail.html"
+class StudentCourseDetailView(LoginRequiredMixin, StudentQueryMixin, DetailView):
+    model = Course 
+    template_name = "students/student_course_detail.html"
 
-#     def get_queryset(self):
-#         qs = super(StudentCourseDetailView, self).get_queryset()
-#         return qs.filter(students__)
-
+    

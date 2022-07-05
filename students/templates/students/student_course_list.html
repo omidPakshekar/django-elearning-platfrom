@@ -10,7 +10,7 @@
           <div class="row">
            {% for object in object_list %}
              <div class="col-md-6">
-                <a href="{% url 'courses:course-detail' pk=object.pk %}">
+                <a href="{% url 'students:student-course-detail' pk=object.pk %}">
                  <div style="height:90%; width:100%;" class="image_main">
                          
                          <img style="height:100%;" src="{{ object.photo.url }}">

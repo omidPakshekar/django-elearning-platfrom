@@ -1,0 +1,30 @@
+
+
+.checkout {
+    margin-top: 15%;
+    margin-bottom:20%;
+  }
+  
+  .checkout-box{
+    border: 1px solid;
+    text-align:left;
+    
+  }
+  
+  .checkout-box-hide{
+    display: block;
+  }
+  .checkout-box-hide2{
+    display: none;
+  }
+  
+  @media only screen and (max-width: 768px) {
+    .checkout-box-hide{
+      display: none;
+    }
+    .checkout-box-hide2{
+      display: block;
+    }
+  
+  }
+  
