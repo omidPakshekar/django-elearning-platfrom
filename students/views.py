@@ -26,7 +26,7 @@ class StudentEnrollCourseView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse_lazy('courses:course-list')
 
-class StudentCourseListView(LoginRequiredMixin, ListView, StudentQueryMixin):
+class StudentCourseListView(LoginRequiredMixin,StudentQueryMixin,  ListView):
     model = Course 
     template_name = 'students/student_course_list.html'
 
