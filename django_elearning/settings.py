@@ -174,6 +174,12 @@ class Dev(Configuration):
         'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
     }
 
+    # add incaseSensetive authentication
+    AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+        'students.backends.CaseInSensitiveModelBackend'
+    )
+
 
 class Prod(Dev):
     DEBUG = False
