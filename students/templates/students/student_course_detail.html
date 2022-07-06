@@ -38,16 +38,13 @@
         
               </div>
             <div class='col-lg-9 col-md-9'>
+                {{module.contents}}
                 <ul>
-                    {% for m in object.modules.all %}
+
+                    {% for m in module.contents.all %}
                     <li data-id='{{ m.id }}' >
                     <a href="{% url 'students:student-course-detail' pk=object.id  %}">
-                        <span>
-                            Module <span>{{ m.order|add:1 }}</span>
-                        </span>
-                        <br>
-                        {{ m.title }}
-                    </a>
+                        </a>
                     </li>
                 {% empty %}
                     <li>No module yet.</li>
