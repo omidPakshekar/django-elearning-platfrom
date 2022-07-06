@@ -37,4 +37,18 @@ class StudentCourseDetailView(LoginRequiredMixin, StudentQueryMixin, DetailView)
     model = Course 
     template_name = "students/student_course_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # get current object
+        course = self.get_object()
+        if 'module_id' in self.kwargs:
+            # get current module
+            print('*%' * 10)
+            context['module'] = course.modules.get(id=self.kwargs['module_id'])
+            print('hi', context['module'])
+        else:
+            context['module'] = course.modules.first()
+        return context
+    
+
     

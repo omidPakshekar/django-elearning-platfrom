@@ -18,7 +18,7 @@
                     <ul>
                         {% for m in object.modules.all %}
                         <li data-id='{{ m.id }}' >
-                          <a href="{% url 'students:student-course-detail' pk=object.id %}">
+                          <a href="{% url 'students:student-course-module-detail' pk=object.id module_id=m.id %}">
                         
                             <i style="font-weight:bold;" class="fa fa-angle-double-left"></i>
         
