@@ -1,15 +1,13 @@
 from django.contrib import admin
-from .models import Category, Course, Module
+from .models import *
 
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['title', 'slug']
     prepopulated_fields = {'slug': ('title',)}
 
-
 class ModuleInline(admin.StackedInline):
     model = Module
-
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ['title', 'category', 'created']
@@ -22,3 +20,10 @@ class CourseAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Module)
+admin.site.register(Content)
+admin.site.register(Text)
+admin.site.register(Image)
+admin.site.register(File)
+admin.site.register(Video)
+
+

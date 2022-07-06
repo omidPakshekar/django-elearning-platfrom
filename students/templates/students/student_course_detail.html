@@ -38,19 +38,12 @@
         
               </div>
             <div class='col-lg-9 col-md-9'>
-                {{module.contents}}
-                <ul>
-
-                    {% for m in module.contents.all %}
-                    <li data-id='{{ m.id }}' >
-                    <a href="{% url 'students:student-course-detail' pk=object.id  %}">
-                        </a>
-                    </li>
-                {% empty %}
-                    <li>No module yet.</li>
+                {% for content in module.contents.all %}
+                {% with item=content.item %}
+                    <h2>{{ item.title }}</h2>
+                    {% comment %} {{ item.render }} {% endcomment %}
+                {% endwith %}
                 {% endfor %}
-                </ul>
-                <p>{{object.title}}</p>
             </div>
         </div> <!-- outter row -->
         
