@@ -44,6 +44,8 @@ class Dev(Configuration):
         'allauth.account',
         'allauth.socialaccount',
         "debug_toolbar",
+        'embed_video',
+
         
     ]
 
