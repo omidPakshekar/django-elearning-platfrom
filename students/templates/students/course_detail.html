@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static custom_tag %}
 
 {% block add_css %}
     <link rel="stylesheet" href="{%  static 'students/css/students.css' %}">
@@ -40,9 +40,7 @@
             <div class='col-lg-9 col-md-9'>
                 {% for content in module.contents.all %}
                 {% with item=content.item %}
-                    <h2>{{ item.title }}</h2>
-                    {% comment %} {{ item.render }} {% endcomment %}
-                    
+                    {% render_content item=item %}
                 {% endwith %}
                 {% endfor %}
             </div>
