@@ -87,10 +87,13 @@ class Text(ItemBase):
     content  = models.TextField()
 
 class Image(ItemBase):
+    content  = models.TextField()
     file     = models.FileField(upload_to= 'images')
 
 class File(ItemBase):
+    content  = models.TextField()
     file     = models.FileField(upload_to = 'file')
 
 class Video(ItemBase):
+    content  = models.TextField()
     url      = models.URLField()
