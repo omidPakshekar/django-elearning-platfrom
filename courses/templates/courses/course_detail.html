@@ -17,11 +17,14 @@
             </div>
         </div> <!-- end row -->
         {% if request.user.is_authenticated %}
+        {{object.students.all}}
+            {% if request.user not in object.students.all %}
             <form method="post" action="{% url 'students:student-enroll' %}">
                 {{ enroll_form }}
                 {% csrf_token %}
                 <input type="submit" name="" value="Enroll now">
             </form>
+            {% endif %}
         {% else %}
             <a class="btn btn-dark" href="{% url 'account_login' %}">login</a>
         {% endif %}

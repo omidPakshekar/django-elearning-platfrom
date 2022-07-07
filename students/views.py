@@ -29,13 +29,13 @@ class StudentEnrollCourseView(LoginRequiredMixin, FormView):
 
 class StudentCourseListView(LoginRequiredMixin,StudentQueryMixin,  ListView):
     model = Course 
-    template_name = 'students/student_course_list.html'
+    template_name = 'students/course_list.html'
 
     
 
 class StudentCourseDetailView(LoginRequiredMixin, StudentQueryMixin, DetailView):
     model = Course 
-    template_name = "students/student_course_detail.html"
+    template_name = "students/course_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
