@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static custom_tag embed_video_tags %}
+
+{% block add_css %}
+    <link rel="stylesheet" href="{%  static 'students/css/students.css' %}">
+{% endblock add_css %}
+
+{% block content %}
+
+
+<div class="services_section layout_padding">
+    <div class="container">
+        <div class='row'> 
+            <div style="margin-top:10px;" class="accordion checkout-box  checkout-box-hide  col-lg-3 col-md-3">
+              <h3> Modules </h3>
+              <div class="" >
+                {% for module in object.modules.all %}
+                      <div id="{{ module.id }}">
+                        <h5 >
+                          <a class="btn collapsed" data-toggle="collapse" data-target="#collapse{{ module.id }}" aria-expanded="true" aria-controls="collapseOne">
+                            <i style="font-weight:bold;" class="fa fa-angle-double-left"></i> <span> {{ module.title }}</span>
+                          </a>
+                        </h5>
+                      </div>
+                  
+                      <div id="collapse{{ module.id }}" class="collapse " aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <ul class="card-body">
+                          {% for i in module.contents.all %}
+                            <li><a>{{i.item}}</a></li>  
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    {% empty %}
+                        <li>No module yet.</li>
+                      {% endfor %}
+                    
+                      <ul>
+                        <li data-id='{{ module.id }}' >
+                          <a href="{% url 'students:student-course-module-detail' pk=object.id module_id=module.id %}">
+    
+                            
+                          </a>
+                        </li>
+                      
+                    </ul>
+                    
+                </div>
+        
+              </div>
+            <div class='col-lg-9 col-md-9'>
+                {% for content in module.contents.all %}
+                {% with item=content.item %}
+                    {% render_content item=item %}
+                {% endwith %}
+                {% endfor %}
+            </div>
+        </div> <!-- outter row -->
+        
+    </div> <!--end row-->
+    
+</div>
+</div>
+{% endblock content %}

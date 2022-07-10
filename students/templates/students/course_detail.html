@@ -12,27 +12,25 @@
     <div class="container">
         <div class='row'> 
     
-            <div style="" class="checkout-box  checkout-box-hide  col-lg-3 col-md-3">
-                <div class="" style="padding:1rem;">
+            <div style="" class="checkout-box  checkout-box-hide col-xl-2  col-lg-3 col-md-3">
+                <div class="padding-bottom:10px;" style="padding:1rem; margin-block-end:10px; ">
                     <h3> Modules </h3>
                     <ul>
-                        {% for m in object.modules.all %}
-                        <li data-id='{{ m.id }}' >
-                          <a href="{% url 'students:student-course-module-detail' pk=object.id module_id=m.id %}">
+                        {% for module in object.modules.all %}
+                        <li data-id='{{ module.id }}' >
+                          <a href="{% url 'students:student-course-module-detail' pk=object.id module_id=module.id %}">
                         
                             <i style="font-weight:bold;" class="fa fa-angle-double-left"></i>
         
                             <span style="font-weight:bold;">
-                                {{ m.title }}
+                                {{ module.title }}
                             </span>
-                            
                           </a>
                         </li>
                       {% empty %}
                         <li>No module yet.</li>
                       {% endfor %}
                     </ul>
-                    
         
                 </div>
         
