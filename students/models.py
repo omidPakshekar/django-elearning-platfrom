@@ -1,6 +1,7 @@
 from tabnanny import verbose
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
 
 
 def get_profile_image_filepath(self, filename):
@@ -39,7 +40,7 @@ class MyAccountManager(BaseUserManager):
 		user.save()
 		return user
 
-class CustomeUserModel(AbstractBaseUser):
+class CustomeUserModel(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name_plural = 'users'
     

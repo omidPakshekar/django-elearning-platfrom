@@ -1,0 +1,15 @@
+{% if object %}
+      Edit course "{{ object.title }}"
+  {% else %}
+      create a new course
+  {% endif %}
+  </h1>
+
+  <div class="module">
+      <h2>course info </h2>
+      <form class="" action="" method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <p><input type="submit" name="" value="save course"></p>
+      </form>
+  </div>

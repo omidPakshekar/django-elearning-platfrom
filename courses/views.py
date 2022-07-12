@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_list_or_404
 from django.views.generic import ( ListView, DetailView,
-                    TemplateView, CreateView, UpdateView,DeleteView)
-
+     TemplateView, CreateView, UpdateView,DeleteView)
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from students.forms import CourseEnrollForm
-
+from django.urls import reverse_lazy, reverse
 
 from .models import Course 
 
@@ -25,4 +25,26 @@ class CourseDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["enroll_form"] = CourseEnrollForm(initial={'course' : self.object}) 
         return context
+
+class OwnerMixin(object):
+    def get_queryset(self):
+        qs = super(OwnerMixin, self).get_queryset()
+        return qs.filter(owner = self.request.user)
+
+class OwnerEditMixin(object):
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super(OwnerEditMixin, self).form_valid(form)
+
+class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin):
+    model = Course
+
+class OwnerCourseEditMixin(OwnerCourseMixin, OwnerEditMixin):
+    fields = ['category', 'title', 'slug', 'overview']
+    success_url = reverse_lazy('courses:course-list')
+    template_name = 'courses/manage/course_form.html'
+
+class CourseCreateView(PermissionRequiredMixin, OwnerCourseEditMixin, CreateView):
+    permission_required = 'courses'
+
     
