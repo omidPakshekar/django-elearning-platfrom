@@ -13,6 +13,8 @@ class CourseListView(ListView):
     context_object_name = 'object_list'
 
     def get_queryset(self):
+        if 'mine' in self.request.get_full_path():
+               return Course.objects.filter(owner=self.request.user).only('title', 'photo')
         return Course.objects.only('title', 'photo')
     
 class CourseDetailView(DetailView):
