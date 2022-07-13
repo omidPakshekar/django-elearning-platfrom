@@ -45,6 +45,6 @@ class OwnerCourseEditMixin(OwnerCourseMixin, OwnerEditMixin):
     template_name = 'courses/manage/course_form.html'
 
 class CourseCreateView(PermissionRequiredMixin, OwnerCourseEditMixin, CreateView):
-    permission_required = 'courses'
+    permission_required = 'courses.add_course'
 
     
