@@ -33,6 +33,7 @@ class OwnerMixin(object):
 
 class OwnerEditMixin(object):
     def form_valid(self, form):
+        print('form=',form)
         form.instance.owner = self.request.user
         return super(OwnerEditMixin, self).form_valid(form)
 
@@ -40,11 +41,12 @@ class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin):
     model = Course
 
 class OwnerCourseEditMixin(OwnerCourseMixin, OwnerEditMixin):
-    fields = ['category', 'title', 'slug', 'overview']
+    fields = ['category', 'title', 'slug', 'photo', 'overview']
     success_url = reverse_lazy('courses:course-list')
     template_name = 'courses/manage/course_form.html'
 
 class CourseCreateView(PermissionRequiredMixin, OwnerCourseEditMixin, CreateView):
     permission_required = 'courses.add_course'
 
-    
+class CourseUpdateView(PermissionRequiredMixin, OwnerCourseEditMixin, UpdateView):
+    permission_required = 'courses.change_course'
