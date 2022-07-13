@@ -17,7 +17,14 @@
             </div>
         </div> <!-- end row -->
         {% if request.user.is_authenticated %}
-            {% if request.user not in object.students.all %}
+            {% if request.user == object.owner %}
+            <form method="post" action="{% url 'courses:course-delete' object.pk %}">
+                
+                {% csrf_token %}
+                <input type="submit" name="" value="Delete">
+            </form>
+            
+            {% elif request.user not in object.students.all %}
             <form method="post" action="{% url 'students:student-enroll' %}">
                 {{ enroll_form }}
                 {% csrf_token %}
