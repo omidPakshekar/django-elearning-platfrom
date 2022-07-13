@@ -11,6 +11,6 @@ urlpatterns = [
     path('mine/', views.CourseListView.as_view(), name='owner-course-list'),
     path('<int:pk>/', views.CourseDetailView.as_view(), name='course-detail'),
     path('create/', views.CourseCreateView.as_view(), name='create-course' ),
-
+    
 ]
 

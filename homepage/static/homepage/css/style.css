@@ -31,7 +31,6 @@
 @import url(slick.css);
 @import url(jquery.fancybox.min.css);
 @import url(jquery-ui.css);
-@import url(nice-select.css);
 
 /*--------------------------------------------------------------------- skeleton ---------------------------------------------------------------------*/
 
@@ -494,7 +493,7 @@ button {
 }
 
 .image_main:hover .image_8 {
-    opacity: ;
+    opacity: 30;
 }
 
 .image_main:hover .text_main {
