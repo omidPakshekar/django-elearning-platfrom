@@ -4,6 +4,18 @@
     {{object.title}}
 {% endblock title %}
 
+{% block add_css %}
+    <style>
+        .btn-group  {
+            color:white;
+            margin: 5px;
+        }
+        .btn-group  a{
+            color:white;
+            margin: 5px;
+        }
+</style>
+{% endblock add_css %}
 
 {% block content %}
     {{object}}
@@ -11,5 +23,40 @@
     {% for module in object.modules.all %}
         {{module.pk}}
     {% endfor %}
-
+    <div class="services_section layout_padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6" >
+                    <h3 style="text-align:center; font-weight:bold"> title</h3>
+                    <div class="btn-group">
+                        <a class='btn btn-sm btn-dark'>
+                            delete module
+                        </a>
+                        <a class='btn btn-sm  btn-info'>
+                            update module
+                        </a>
+                        <a class='btn btn-sm  btn-dark'>
+                            update module content
+                        </a>
+                        
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <h3 style="font-weight:bold"> title</h3>
+                    <div>
+                        <a class='btn btn-sm btn-dark'>
+                            delete module
+                        </a>
+                        <a class='btn btn-sm  btn-dark'>
+                            update module
+                        </a>
+                        <a class='btn btn-sm  btn-dark'>
+                            update module content
+                        </a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
