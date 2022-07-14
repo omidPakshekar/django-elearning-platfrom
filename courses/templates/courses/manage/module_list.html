@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{object.title}}
+{% endblock title %}
+
+
+{% block content %}
+    {{object}}
+    <br>
+    {% for module in object.modules.all %}
+        {{module.pk}}
+    {% endfor %}
+
+{% endblock content %}

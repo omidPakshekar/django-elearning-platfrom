@@ -1,11 +1,11 @@
-from django.shortcuts import render, get_list_or_404
+from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.views.generic import ( ListView, DetailView,
      TemplateView, CreateView, UpdateView,DeleteView)
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from students.forms import CourseEnrollForm
 from django.urls import reverse_lazy, reverse
-
-from .models import Course 
+from django.views import View
+from .models import Course, Module
 
 class CourseListView(ListView):
     model = Course 
@@ -54,3 +54,25 @@ class CourseUpdateView(PermissionRequiredMixin, OwnerCourseEditMixin, UpdateView
 class CourseDeleteView(PermissionRequiredMixin, OwnerCourseMixin, DeleteView):
     permission_required = 'courses.delete_course'
     success_url = reverse_lazy('courses:course-list')
+
+class CourseModuleUpdate(PermissionRequiredMixin, OwnerCourseMixin):
+    
+    def dispatch(self, request, pk, *args, **kwargs):
+        """ 
+            befour calling get(or post) method we assign our current
+            model that want to work on
+        """
+        # self.cour
+        return super(CourseModuleUpdate, self).dispatch(request, pk, *args, **kwargs)
+
+class CourseModuleListView(View):
+    course = None
+    template_name = 'courses/manage/module_list.html'
+
+    
+    def dispatch(self, request, pk):
+        self.course = get_object_or_404(Course, id=pk, owner=request.user)
+        return super(CourseModuleListView, self).dispatch(request, pk)
+    
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {"object" : self.course})
