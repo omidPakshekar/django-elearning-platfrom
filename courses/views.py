@@ -56,20 +56,10 @@ class CourseDeleteView(PermissionRequiredMixin, OwnerCourseMixin, DeleteView):
     permission_required = 'courses.delete_course'
     success_url = reverse_lazy('courses:course-list')
 
-class CourseModuleUpdate(PermissionRequiredMixin, OwnerCourseMixin):
-    
-    def dispatch(self, request, pk, *args, **kwargs):
-        """ 
-            befour calling get(or post) method we assign our current
-            model that want to work on
-        """
-        # self.cour
-        return super(CourseModuleUpdate, self).dispatch(request, pk, *args, **kwargs)
 
 class CourseModuleListView(View):
     course = None
     template_name = 'courses/manage/module_list.html'
-
     
     def dispatch(self, request, pk):
         self.course = get_object_or_404(Course, id=pk, owner=request.user)
@@ -78,14 +68,26 @@ class CourseModuleListView(View):
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {"object" : self.course})
 
-class CourseModuleDeleteView(DeleteView, PermissionRequiredMixin):
-    model = Module
-    # lookup_field= 'module_id'
-    permission_required = 'modules.delete_module'
 
+
+class ModuleMixin(object):
     def get_object(self):
-        return Module.objects.get(id=int(self.kwargs['module_id']))
+        if 'module_id' in self.kwargs:
+            return Module.objects.get(id=int(self.kwargs['module_id']))
+        return super(OwnerMixin, self).get_queryset()
+        
+class CourseModuleDeleteView(ModuleMixin, DeleteView, PermissionRequiredMixin):
+    model = Module
+    permission_required = 'modules.delete_module'
 
     def get_success_url(self):
         return reverse('courses:course-module-list', kwargs={'pk': self.kwargs['pk']})
-    
+
+class CourseModuleUpdateView(ModuleMixin, UpdateView, PermissionRequiredMixin):
+    model = Module
+    fields = ['course', 'title', 'description']
+    template_name='courses/manage/module_update.html'
+    permission_required = 'modules.change_module'
+    def get_success_url(self):
+        return reverse('courses:course-module-list', kwargs={'pk': self.kwargs['pk']})
+
