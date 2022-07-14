@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
+{% block title %}
+
+    {{ object.title }}
+
+{% endblock title %}
+
+
 {% block content %}
     
 <div class="services_section layout_padding">
@@ -18,18 +25,34 @@
         </div> <!-- end row -->
         {% if request.user.is_authenticated %}
             {% if request.user == object.owner %}
-            <form method="post" action="{% url 'courses:course-delete' object.pk %}">
-                
-                {% csrf_token %}
-                <input type="submit" name="" value="Delete">
-            </form>
             
+            
+            <div style="display:inline-flex">
+                <span>
+                    <form method="post" action="{% url 'courses:course-delete' object.pk %}">
+                        {% csrf_token %}
+                        <input class='btn btn-danger' type="submit" name="" value="Delete">
+                    </form>
+                </span>
+                <span style="margin-left:5px;">
+                    <a class='btn btn-info' href="{% url 'courses:course-update' pk=object.pk %}" >
+                        edit course
+                    </a>
+                </span>
+                <span>
+                    <a class='btn btn-info' href="{% url 'courses:course-update' pk=object.pk %}" >
+                        edit module
+                    </a>
+                </span>
+            </div>
             {% elif request.user not in object.students.all %}
+            
             <form method="post" action="{% url 'students:student-enroll' %}">
                 {{ enroll_form }}
                 {% csrf_token %}
                 <input type="submit" name="" value="Enroll now">
             </form>
+        
             {% else %}
                 <a class='btn btn-dark' href="{% url 'students:student-course-detail' pk=object.pk %}" >
                     go to course
