@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.views.generic import ( ListView, DetailView,
      TemplateView, CreateView, UpdateView,DeleteView)
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from requests import post
 from students.forms import CourseEnrollForm
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -76,3 +77,15 @@ class CourseModuleListView(View):
     
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {"object" : self.course})
+
+class CourseModuleDeleteView(DeleteView, PermissionRequiredMixin):
+    model = Module
+    # lookup_field= 'module_id'
+    permission_required = 'modules.delete_module'
+
+    def get_object(self):
+        return Module.objects.get(id=int(self.kwargs['module_id']))
+
+    def get_success_url(self):
+        return reverse('courses:course-module-list', kwargs={'pk': self.kwargs['pk']})
+    

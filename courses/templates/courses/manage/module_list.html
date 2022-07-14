@@ -12,41 +12,30 @@
         }
         .btn-group  a{
             color:white;
-            margin: 5px;
+            margin-right: 5px;
+            margin-left: 5px;
+
         }
 </style>
 {% endblock add_css %}
 
 {% block content %}
-    {{object}}
-    <br>
-    {% for module in object.modules.all %}
-        {{module.pk}}
-    {% endfor %}
     <div class="services_section layout_padding">
         <div class="container">
             <div class="row">
+        
+                {% for module in object.modules.all %}
+    
+
                 <div class="col-md-6" >
-                    <h3 style="text-align:center; font-weight:bold"> title</h3>
+                    <h3 style="text-align:center; font-weight:bold"> {{module.title}}</h3>
                     <div class="btn-group">
-                        <a class='btn btn-sm btn-dark'>
-                            delete module
-                        </a>
-                        <a class='btn btn-sm  btn-info'>
-                            update module
-                        </a>
-                        <a class='btn btn-sm  btn-dark'>
-                            update module content
-                        </a>
-                        
-                    </div>
-                </div>
-                <div class="col-md-6" >
-                    <h3 style="font-weight:bold"> title</h3>
-                    <div>
-                        <a class='btn btn-sm btn-dark'>
-                            delete module
-                        </a>
+                        <span>
+                            <form method="post" action="{% url 'courses:course-module-delete' pk=object.pk module_id=module.pk %}">
+                                {% csrf_token %}
+                                <input class='btn btn-sm btn-danger' type="submit" name="" value="delete module">
+                            </form>
+                        </span>
                         <a class='btn btn-sm  btn-dark'>
                             update module
                         </a>
@@ -56,6 +45,12 @@
                         
                     </div>
                 </div>
+                {% empty %}
+                    <p> there is no module</d>
+                {% endfor %}
+            </div>
+            <div class="btn-group">
+                {% comment %} <a class='btn btn-sm btn-info' href="{% url %}">add new module</a> {% endcomment %}
             </div>
         </div>
     </div>
