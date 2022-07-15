@@ -5,6 +5,7 @@ from configurations import Configuration
 from configurations import values
 import dj_database_url
 
+from debug_toolbar.panels.logging import collector 
 
 class Dev(Configuration):
 
@@ -181,7 +182,7 @@ class Dev(Configuration):
         'django.contrib.auth.backends.ModelBackend',
         'students.backends.CaseInSensitiveModelBackend'
     )
-
+    LOGGING = {    'version': 1,    'disable_existing_loggers': False,    'incremental': True,    'root': {        'level': 'DEBUG',    },}
 
 class Prod(Dev):
     DEBUG = False

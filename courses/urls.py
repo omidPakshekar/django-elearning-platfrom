@@ -15,8 +15,10 @@ urlpatterns = [
     path('<int:pk>/edit/', views.CourseUpdateView.as_view(), name='course-update'),
     path('<int:pk>/delete/', views.CourseDeleteView.as_view(), name='course-delete'),
     path('<int:pk>/modules/', views.CourseModuleListView.as_view(), name='course-module-list'),
+    path('<int:pk>/modules/<int:module_id>/', views.CourseModuleDetailView.as_view(), name='course-module-update'),
     path('<int:pk>/modules/create/', views.CourseModuleCreateView.as_view(), name='course-add-module'),
     path('<int:pk>/modules/<int:module_id>/delete/', views.CourseModuleDeleteView.as_view(), name='course-module-delete'),
+    path('<int:pk>/modules/<int:module_id>/update/', views.CourseModuleUpdateView.as_view(), name='course-module-update'),
     path('<int:pk>/modules/<int:module_id>/update/', views.CourseModuleUpdateView.as_view(), name='course-module-update'),
 
 ]

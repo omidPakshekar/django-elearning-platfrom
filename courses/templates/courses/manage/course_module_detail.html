@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static custom_tag embed_video_tags %}
+
+{% block add_css %}
+    <link rel="stylesheet" href="{%  static 'students/css/students.css' %}">
+{% endblock add_css %}
+
+{% block content %}
+
+
+<div class="services_section layout_padding">
+    <div class="container">
+        <div class='row'> 
+          <div class="btn-collapse-cg col-sm-12 col-md-12">
+            <button style="font-size: 1rem;"  class="openbtn font-Lalezar" onclick="openNav()"> module ☰</button>
+          </div>
+            <div style="" class="checkout-box  checkout-box-hide col-xl-2  col-lg-3 col-md-3">
+                <div class="padding-bottom:10px;" style="padding:1rem; margin-block-end:10px; ">
+                    <h3> Modules </h3>
+                    <ul>
+                        {% for module in object.modules.all %}
+                        <li data-id='{{ module.id }}' >
+                          <a href="{% url 'students:student-course-module-detail' pk=object.id module_id=module.id %}">
+                        
+                            <i style="font-weight:bold;" class="fa fa-angle-double-left"></i>
+        
+                            <span style="font-weight:bold;">
+                                {{ module.title }}
+                            </span>
+                          </a>
+                        </li>
+                      {% empty %}
+                        <li>No module yet.</li>
+                      {% endfor %}
+                    </ul>
+        
+                </div>
+        
+              </div>
+            <div  class='col-lg-9 col-md-9'>
+                {% for content in module.contents.all %}
+                {% with item=content.item %}
+                    {% render_content item=item %}
+                    <form method="post" action="{% url 'courses:course-module-delete' pk=object.pk module_id=module.pk %}">
+                        {% csrf_token %}
+                        <input class='btn btn-sm btn-danger' type="submit" name="" value="delete item">
+                    </form>
+                {% endwith %}
+                {% endfor %}
+            </div>
+        </div> <!-- outter row -->
+        <div id="mySidebar" class="sidebar  ">
+          <h3 style="font-size:2rem;" class="ul-li font-Lalezar">دسته بندی</h3>
+            <ul class="sidebar-li-a">
+                <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+                <form  action="." method="get">
+      
+                  <li class="ul-li"><a class="col-3-a a-hover font-Lalezar" href="">لپ تاپ <i class="fa fa-angle-double-right"></i></a></li>
+                    <li class="ul-li"><a class="col-3-a a-hover font-Lalezar" href="">ساعت <i class="fa fa-angle-double-right"></i></a></li>
+                    <li class="ul-li"><a class="col-3-a a-hover font-Lalezar" href="">موبایل <i class="fa fa-angle-double-right"></i></a></li>
+                    <li class="ul-li"><a class="col-3-a  font-Lalezar" href="">تبلت <i class="fa fa-angle-double-right"></i></a></li>
+      
+                    <li class="ul-li">  <button type="submit" class="btn-product-box btn btn-dark">جست و جو کردن</button></li>
+                </form>
+                </ul>
+        </div>  
+    </div> <!--end row-->
+    
+</div>
+
+
+<script>
+  function openNav() {
+    // document.getElementById("mySidebar").style.display = "block";
+
+    document.getElementById("mySidebar").style.width = "100%";
+    document.getElementById("main").style.marginRight = "250px";
+  }
+
+  function closeNav() {
+    // document.getElementById("mySidebar").style.display = "none";
+
+    document.getElementById("mySidebar").style.width = "0%";
+    document.getElementById("main").style.marginRight= "0";
+  }
+  </script>
+
+{% endblock content %}

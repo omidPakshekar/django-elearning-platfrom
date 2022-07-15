@@ -42,10 +42,7 @@ class StudentCourseDetailView(LoginRequiredMixin, StudentQueryMixin, DetailView)
         # get current object
         course = self.get_object()
         if 'module_id' in self.kwargs:
-            # get current module
-            print('*%' * 10)
             context['module'] = course.modules.get(id=self.kwargs['module_id'])
-            print('hi', context['module'])
         else:
             context['module'] = course.modules.first()
         return context

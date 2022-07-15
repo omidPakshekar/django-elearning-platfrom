@@ -7,6 +7,9 @@ from students.forms import CourseEnrollForm
 from django.urls import reverse_lazy, reverse
 from django.views import View
 from .models import Course, Module
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CourseListView(ListView):
     model = Course 
@@ -75,12 +78,14 @@ class ModuleObjectMixin(object):
         if 'module_id' in self.kwargs:
             return Module.objects.get(id=int(self.kwargs['module_id']))
         return super(OwnerMixin, self).get_queryset()
-        
+
 class CourseModuleDeleteView(ModuleObjectMixin, DeleteView, PermissionRequiredMixin):
     model = Module
     permission_required = 'modules.delete_module'
 
     def get_success_url(self):
+
+        logging.debug('Debug Message')
         return reverse('courses:course-module-list', kwargs={'pk': self.kwargs['pk']})
 
 class CourseModuleEditMixin(object):
@@ -91,6 +96,7 @@ class CourseModuleEditMixin(object):
         return reverse('courses:course-module-list', kwargs={'pk': self.kwargs['pk']})
     def form_valid(self, form):
         form.instance.course = Course.objects.get(pk=int(self.kwargs["pk"]))
+        logger.debug('add course to form')
         return super(CourseModuleEditMixin, self).form_valid(form)
 
 
@@ -100,3 +106,17 @@ class CourseModuleUpdateView(ModuleObjectMixin, CourseModuleEditMixin, UpdateVie
 
 class CourseModuleCreateView(ModuleObjectMixin, CourseModuleEditMixin, CreateView, PermissionRequiredMixin):
     permission_required = 'modules.add_module'
+
+class CourseModuleDetailView(LoginRequiredMixin, OwnerMixin, DetailView):
+    model = Course 
+    template_name = "courses/manage/course_module_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # get current object
+        course = self.get_object()
+        if 'module_id' in self.kwargs:
+            context['module'] = course.modules.get(id=self.kwargs['module_id'])
+        else:
+            context['module'] = course.modules.first()
+        return context
