@@ -70,24 +70,30 @@ class CourseModuleListView(View):
 
 
 
-class ModuleMixin(object):
+class ModuleObjectMixin(object):
     def get_object(self):
         if 'module_id' in self.kwargs:
             return Module.objects.get(id=int(self.kwargs['module_id']))
         return super(OwnerMixin, self).get_queryset()
         
-class CourseModuleDeleteView(ModuleMixin, DeleteView, PermissionRequiredMixin):
+class CourseModuleDeleteView(ModuleObjectMixin, DeleteView, PermissionRequiredMixin):
     model = Module
     permission_required = 'modules.delete_module'
 
     def get_success_url(self):
         return reverse('courses:course-module-list', kwargs={'pk': self.kwargs['pk']})
 
-class CourseModuleUpdateView(ModuleMixin, UpdateView, PermissionRequiredMixin):
+class CourseModuleEditMixin(object):
     model = Module
     fields = ['course', 'title', 'description']
     template_name='courses/manage/module_update.html'
-    permission_required = 'modules.change_module'
     def get_success_url(self):
         return reverse('courses:course-module-list', kwargs={'pk': self.kwargs['pk']})
 
+
+class CourseModuleUpdateView(ModuleObjectMixin, CourseModuleEditMixin, UpdateView, PermissionRequiredMixin):
+    permission_required = 'modules.change_module'
+
+
+class CourseModuleCreateView(ModuleObjectMixin, CourseModuleEditMixin, CreateView, PermissionRequiredMixin):
+    permission_required = 'modules.add_module'
