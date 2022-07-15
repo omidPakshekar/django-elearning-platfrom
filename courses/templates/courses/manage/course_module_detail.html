@@ -41,7 +41,7 @@
                 {% for content in module.contents.all %}
                 {% with item=content.item %}
                     {% render_content item=item %}
-                    <form method="post" action="{% url 'courses:course-module-delete' pk=object.pk module_id=module.pk %}">
+                    <form method="post" action="{% url 'courses:delete-content'  pk=object.pk module_id=module.id content_id=content.pk %}">
                         {% csrf_token %}
                         <input class='btn btn-sm btn-danger' type="submit" name="" value="delete item">
                     </form>

@@ -182,7 +182,14 @@ class Dev(Configuration):
         'django.contrib.auth.backends.ModelBackend',
         'students.backends.CaseInSensitiveModelBackend'
     )
-    LOGGING = {    'version': 1,    'disable_existing_loggers': False,    'incremental': True,    'root': {        'level': 'DEBUG',    },}
+    LOGGING = {    
+        'version': 1,
+        'disable_existing_loggers': False,
+        'incremental': True,
+        'root': {
+            'level': 'DEBUG',
+        },
+    }
 
 class Prod(Dev):
     DEBUG = False

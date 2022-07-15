@@ -6,7 +6,7 @@ from requests import post
 from students.forms import CourseEnrollForm
 from django.urls import reverse_lazy, reverse
 from django.views import View
-from .models import Course, Module
+from .models import Content, Course, Module
 import logging
 
 logger = logging.getLogger(__name__)
@@ -75,6 +75,8 @@ class CourseModuleListView(View):
 
 class ModuleObjectMixin(object):
     def get_object(self):
+        if "content_id" in self.kwargs:
+            return Content.objects.get(id=int(self.kwargs['content_id']))
         if 'module_id' in self.kwargs:
             return Module.objects.get(id=int(self.kwargs['module_id']))
         return super(OwnerMixin, self).get_queryset()
@@ -84,8 +86,6 @@ class CourseModuleDeleteView(ModuleObjectMixin, DeleteView, PermissionRequiredMi
     permission_required = 'modules.delete_module'
 
     def get_success_url(self):
-
-        logging.debug('Debug Message')
         return reverse('courses:course-module-list', kwargs={'pk': self.kwargs['pk']})
 
 class CourseModuleEditMixin(object):
@@ -120,3 +120,10 @@ class CourseModuleDetailView(LoginRequiredMixin, OwnerMixin, DetailView):
         else:
             context['module'] = course.modules.first()
         return context
+
+class ModuleContentDeleteView(PermissionRequiredMixin, ModuleObjectMixin, DeleteView):
+    model = Content
+    permission_required = 'contents.delete_content'
+
+    def get_success_url(self):
+        return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
