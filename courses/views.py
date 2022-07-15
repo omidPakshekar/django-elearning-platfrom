@@ -85,10 +85,13 @@ class CourseModuleDeleteView(ModuleObjectMixin, DeleteView, PermissionRequiredMi
 
 class CourseModuleEditMixin(object):
     model = Module
-    fields = ['course', 'title', 'description']
+    fields = [ 'title', 'description']
     template_name='courses/manage/module_update.html'
     def get_success_url(self):
         return reverse('courses:course-module-list', kwargs={'pk': self.kwargs['pk']})
+    def form_valid(self, form):
+        form.instance.course = Course.objects.get(pk=int(self.kwargs["pk"]))
+        return super(CourseModuleEditMixin, self).form_valid(form)
 
 
 class CourseModuleUpdateView(ModuleObjectMixin, CourseModuleEditMixin, UpdateView, PermissionRequiredMixin):

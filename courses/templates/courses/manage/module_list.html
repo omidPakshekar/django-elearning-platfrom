@@ -50,7 +50,7 @@
                 {% endfor %}
             </div>
             <div class="btn-group">
-                {% comment %} <a class='btn btn-sm btn-info' href="{% url %}">add new module</a> {% endcomment %}
+                <a class='btn btn-sm btn-info' href="{% url 'courses:course-add-module'  pk=object.pk %}">add new module</a>
             </div>
         </div>
     </div>
