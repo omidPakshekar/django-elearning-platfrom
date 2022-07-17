@@ -79,7 +79,7 @@ class ModuleObjectMixin(object):
             return Content.objects.get(id=int(self.kwargs['content_id']))
         if 'module_id' in self.kwargs:
             return Module.objects.get(id=int(self.kwargs['module_id']))
-        return super(OwnerMixin, self).get_queryset()
+        return super(ModuleObjectMixin, self).get_queryset()
 
 class CourseModuleDeleteView(ModuleObjectMixin, DeleteView, PermissionRequiredMixin):
     model = Module
@@ -134,7 +134,7 @@ class ModuleContentDeleteView(PermissionRequiredMixin, ModuleObjectMixin, Delete
     def get_success_url(self):
         return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
 
-class ModuleContentUpdateView( ModuleObjectMixin, UpdateView):
+class ModuleContentUpdateView(ModuleObjectMixin, UpdateView):
     model = None
     fields = []
     template_name='courses/manage/module_update.html'
@@ -143,29 +143,24 @@ class ModuleContentUpdateView( ModuleObjectMixin, UpdateView):
         if model_name in ['text', 'video', 'image', 'file']:
             return apps.get_model(app_label='courses', model_name=model_name)
         return None
+
     def get_fields(self, model):
-        fields_ = ['id', 'pk', 'title',  'updated_time', 'created_time']
+        fields_ = ['id', 'pk', 'title','owner',  'updated_time', 'created_time']
         for i in model._meta.fields:
-            if i.name not in fields_:
+            if i.name not in fields_ and i.name not in self.fields:
                 self.fields.append(i.name)
 
     def dispatch(self, request, module_id, content_id, pk):
         content = Content.objects.get(pk=content_id).item
-        
-        logger.debug(content)
-        logger.debug(content._meta)
         logger.debug(content._meta.model_name)
         model_ = self.get_model(content._meta.model_name)
         self.get_fields(model_)
         logger.debug(self.fields)
-        logger.debug(len(self.fields))
-        self.fields = ['owner', 'content']
-        self.model = model_        
+        self.model = model_   
         return super(ModuleContentUpdateView, self).dispatch(request, module_id, content_id, pk)
     
     def get_success_url(self):
         return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
     
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        return super(ModuleContentUpdateView, self).form_valid(form)
+    def get_object(self):
+        return self.model.objects.get(id=Content.objects.get(id=int(self.kwargs['content_id'])).object_id)

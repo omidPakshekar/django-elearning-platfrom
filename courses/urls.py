@@ -21,8 +21,8 @@ urlpatterns = [
     path('<int:pk>/modules/<int:module_id>/update/', views.CourseModuleUpdateView.as_view(), name='course-module-update'),
     path('<int:pk>/modules/<int:module_id>/update/', views.CourseModuleUpdateView.as_view(), name='course-module-update'),
     # manage content
-    path('<int:pk>/modules/<int:module_id>/content/<int:content_id>/delete', views.ModuleContentDeleteView.as_view(), name='delete-content'),
-    path('<int:pk>/modules/<int:module_id>/content/<int:content_id>/update', views.ModuleContentUpdateView.as_view(), name='update-content'),
+    path('<int:pk>/modules/<int:module_id>/content/<int:content_id>/delete/', views.ModuleContentDeleteView.as_view(), name='delete-content'),
+    path('<int:pk>/modules/<int:module_id>/content/<int:content_id>/update/', views.ModuleContentUpdateView.as_view(), name='update-content'),
 
 ]
 
