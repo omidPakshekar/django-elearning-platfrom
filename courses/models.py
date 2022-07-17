@@ -72,7 +72,7 @@ class Content(models.Model):
 
 class ItemBase(models.Model):
     owner       = models.ForeignKey(User, related_name="%(class)s_related", on_delete=models.CASCADE)
-    title       = models.CharField(max_length = 250)
+    title       = models.CharField(max_length = 250, blank=True)
     created_time= models.DateTimeField(auto_now_add = True)
     updated_time= models.DateTimeField(auto_now = True)
 
@@ -84,7 +84,7 @@ class ItemBase(models.Model):
 
     
 class Text(ItemBase):
-    content  = models.TextField()
+    content  = models.TextField(blank=True)
 
 class Image(ItemBase):
     file     = models.FileField(upload_to= 'images')
