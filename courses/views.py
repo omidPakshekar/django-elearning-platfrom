@@ -144,7 +144,7 @@ class ModuleContentUpdateView( ModuleObjectMixin, UpdateView):
             return apps.get_model(app_label='courses', model_name=model_name)
         return None
     def get_fields(self, model):
-        fields_ = ['id', 'pk', 'title', 'owner', 'title', 'updated_time', 'created_time']
+        fields_ = ['id', 'pk', 'title',  'updated_time', 'created_time']
         for i in model._meta.fields:
             if i.name not in fields_:
                 self.fields.append(i.name)
@@ -159,7 +159,7 @@ class ModuleContentUpdateView( ModuleObjectMixin, UpdateView):
         self.get_fields(model_)
         logger.debug(self.fields)
         logger.debug(len(self.fields))
-        self.fields = ['content']
+        self.fields = ['owner', 'content']
         self.model = model_        
         return super(ModuleContentUpdateView, self).dispatch(request, module_id, content_id, pk)
     
@@ -169,5 +169,3 @@ class ModuleContentUpdateView( ModuleObjectMixin, UpdateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super(ModuleContentUpdateView, self).form_valid(form)
-    def form_invalid(self, form):
-        return super(ModuleContentUpdateView, self).form_invalid(form)
