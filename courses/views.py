@@ -150,6 +150,9 @@ class ModuleContentUpdateView(ModuleObjectMixin, UpdateView):
             if i.name not in fields_ and i.name not in self.fields:
                 self.fields.append(i.name)
 
+    def get_object(self):
+        return self.model.objects.get(id=Content.objects.get(id=int(self.kwargs['content_id'])).object_id)
+
     def dispatch(self, request, module_id, content_id, pk):
         content = Content.objects.get(pk=content_id).item
         logger.debug(content._meta.model_name)
@@ -158,9 +161,7 @@ class ModuleContentUpdateView(ModuleObjectMixin, UpdateView):
         logger.debug(self.fields)
         self.model = model_   
         return super(ModuleContentUpdateView, self).dispatch(request, module_id, content_id, pk)
-    
+
     def get_success_url(self):
         return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
     
-    def get_object(self):
-        return self.model.objects.get(id=Content.objects.get(id=int(self.kwargs['content_id'])).object_id)
