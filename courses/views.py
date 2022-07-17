@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMix
 from students.forms import CourseEnrollForm
 from django.urls import reverse_lazy, reverse
 from django.views import View
+from django.apps import apps
 from .models import Content, Course, Module
 import logging
 
@@ -120,7 +121,6 @@ class CourseModuleDetailView(LoginRequiredMixin, OwnerMixin, DetailView):
             context['module'] = course.modules.first()
         return context
 
-from django.contrib.contenttypes.models import ContentType
 
 class ModuleContentDeleteView(PermissionRequiredMixin, ModuleObjectMixin, DeleteView):
     model = Content
@@ -133,3 +133,24 @@ class ModuleContentDeleteView(PermissionRequiredMixin, ModuleObjectMixin, Delete
 
     def get_success_url(self):
         return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
+
+class ModuleContentUpdateView(PermissionRequiredMixin, ModuleObjectMixin, UpdateView):
+    model = None
+    permission_required = 'contents.add_content'
+    fields = ['order']
+    template_name='courses/manage/module_update.html'
+
+    def get_model(self, model_name):
+        if model_name in ['text', 'video', 'image', 'file']:
+            return apps.get_model(app_label='courses', model_name=model_name)
+
+    def dispatch(self, request, module_id, content_id, pk):
+        content = Content.objects.get(pk=content_id).item
+        
+        logger.debug(content)
+        logger.debug(content._meta)
+        logger.debug(content._meta.model_name)
+
+        self.model = Content        
+        return super(ModuleContentUpdateView, self).dispatch(request, module_id, content_id, pk)
+   

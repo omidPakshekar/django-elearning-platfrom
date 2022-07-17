@@ -45,6 +45,9 @@
                         {% csrf_token %}
                         <input class='btn btn-sm btn-danger' type="submit" name="" value="delete item">
                     </form>
+                    <a href="{% url  'courses:update-content'  pk=object.pk module_id=module.id content_id=content.pk %}">
+                      update
+                    </a>
                 {% endwith %}
                 {% endfor %}
             </div>
