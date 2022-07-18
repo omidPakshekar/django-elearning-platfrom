@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render, get_list_or_404
+from django.shortcuts import get_object_or_404, render, get_list_or_404, redirect
 from django.views.generic import ( ListView, DetailView,
      TemplateView, CreateView, UpdateView,DeleteView)
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
@@ -142,6 +142,8 @@ class ContentMixin(object):
         return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
     
     def get_model(self, model_name):
+        if model_name == 'text':
+            self.fields.append('title')
         if model_name in ['text', 'video', 'image', 'file']:
             return apps.get_model(app_label='courses', model_name=model_name)
         return None
@@ -149,11 +151,11 @@ class ContentMixin(object):
     def get_fields(self, model):
         fields_ = ['id', 'pk', 'title','owner',  'updated_time', 'created_time']
         for i in model._meta.fields:
-            if i.name not in fields_ and i.name not in self.fields:
+            if i.name not in fields_ :
                 self.fields.append(i.name)
 
-    # def get_object(self):
-    #     return self.model.objects.get(id=Content.objects.get(id=int(self.kwargs['content_id'])).object_id)
+    def get_object(self):
+        return self.model.objects.get(id=Content.objects.get(id=int(self.kwargs['content_id'])).object_id)
 
 
 
@@ -175,6 +177,7 @@ class ModuleContentUpdateView(PermissionRequiredMixin, ContentMixin, UpdateView)
 class ModuleContentCreateView(PermissionRequiredMixin, ContentMixin, CreateView):
     model = None
     fields = []
+    module = None
     template_name='courses/manage/update_create_content.html'
     permission_required = 'contents.add_content'
 
@@ -182,10 +185,17 @@ class ModuleContentCreateView(PermissionRequiredMixin, ContentMixin, CreateView)
         model_ = self.get_model(model_name)
         self.get_fields(model_)
         logger.debug(self.fields)
+        self.module = get_object_or_404(Module, id = module_id, course__owner = request.user)
         self.model = model_   
         return super(ModuleContentCreateView, self).dispatch(request, module_id,  model_name, pk)
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        # logger.debug('fdf ', form)
-        print('%%%%%%%%%', type(form.instance), form.instance)
-        return super(ModuleContentCreateView, self).form_valid(form)
+        object = form.save()
+        print('object.id=', object.id)
+        Content.objects.create(module= self.module, item=object)
+        return redirect('courses:course-module', pk = self.kwargs['pk'], module_id= self.kwargs['module_id'])
+
+
+
+            
