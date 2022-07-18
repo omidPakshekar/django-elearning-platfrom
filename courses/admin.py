@@ -16,14 +16,23 @@ class CourseAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     inlines = [ModuleInline]
 
+class ItemAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'owner', 'title']    
+
+class ContentAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'module', 'item', 'content_type']    
+
+class ModuleAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'course', 'title']    
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Course, CourseAdmin)
-admin.site.register(Module)
-admin.site.register(Content)
-admin.site.register(Text)
-admin.site.register(Image)
-admin.site.register(File)
-admin.site.register(Video)
+admin.site.register(Module, ModuleAdmin)
+admin.site.register(Content, ContentAdmin)
+admin.site.register(Text, ItemAdmin)
+admin.site.register(Image, ItemAdmin)
+admin.site.register(File, ItemAdmin)
+admin.site.register(Video, ItemAdmin)
 
 
