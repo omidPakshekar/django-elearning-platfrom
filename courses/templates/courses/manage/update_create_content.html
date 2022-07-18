@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}
+    {% if object %}
+          Edit Content "{{ object.title }}"
+      {% else %}
+          create a new Content
+      {% endif %}
+{% endblock title %}
+
+{% block content %}
+<div class="services_section layout_padding">
+    <div class="container">
+  <div class="module">
+      <h2>Content info </h2>
+      <form  method="post" enctype="multipart/form-data">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <p><input class='btn btn-dark' type="submit" name="" value="save course"></p>
+      </form>
+  </div>
+
+</div>
+</div>
+  {% endblock content %}

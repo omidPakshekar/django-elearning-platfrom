@@ -134,10 +134,11 @@ class ModuleContentDeleteView(PermissionRequiredMixin, ModuleObjectMixin, Delete
     def get_success_url(self):
         return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
 
-class ModuleContentUpdateView(ModuleObjectMixin, UpdateView):
+class ModuleContentUpdateView(PermissionRequiredMixin, UpdateView):
     model = None
     fields = []
-    template_name='courses/manage/module_update.html'
+    template_name='courses/manage/update_create_content.html'
+    permission_required = 'contents.change_content'
 
     def get_model(self, model_name):
         if model_name in ['text', 'video', 'image', 'file']:

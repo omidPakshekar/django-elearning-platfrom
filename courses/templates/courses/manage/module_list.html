@@ -39,7 +39,7 @@
                         <a href="{% url 'courses:course-module-update' pk=object.pk module_id=module.pk %}" class='btn btn-sm  btn-dark'>
                             update module
                         </a>
-                        <a class='btn btn-sm  btn-dark'>
+                        <a href="{% url 'courses:course-module' pk=object.pk module_id=module.pk %}" class='btn btn-sm  btn-dark'>
                             update module content
                         </a>
                         
