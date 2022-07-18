@@ -133,13 +133,14 @@ class ModuleContentDeleteView(PermissionRequiredMixin, ModuleObjectMixin, Delete
 
     def get_success_url(self):
         return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
+"""
+    manage content craete and update content (text, file, video, image)
 
-class ModuleContentUpdateView(PermissionRequiredMixin, UpdateView):
-    model = None
-    fields = []
-    template_name='courses/manage/update_create_content.html'
-    permission_required = 'contents.change_content'
-
+"""
+class ContentMixin(object):
+    def get_success_url(self):
+        return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
+    
     def get_model(self, model_name):
         if model_name in ['text', 'video', 'image', 'file']:
             return apps.get_model(app_label='courses', model_name=model_name)
@@ -151,9 +152,17 @@ class ModuleContentUpdateView(PermissionRequiredMixin, UpdateView):
             if i.name not in fields_ and i.name not in self.fields:
                 self.fields.append(i.name)
 
-    def get_object(self):
-        return self.model.objects.get(id=Content.objects.get(id=int(self.kwargs['content_id'])).object_id)
+    # def get_object(self):
+    #     return self.model.objects.get(id=Content.objects.get(id=int(self.kwargs['content_id'])).object_id)
 
+
+
+class ModuleContentUpdateView(PermissionRequiredMixin, ContentMixin, UpdateView):
+    model = None
+    fields = []
+    template_name='courses/manage/update_create_content.html'
+    permission_required = 'contents.change_content'
+    
     def dispatch(self, request, module_id, content_id, pk):
         content = Content.objects.get(pk=content_id).item
         logger.debug(content._meta.model_name)
@@ -163,6 +172,20 @@ class ModuleContentUpdateView(PermissionRequiredMixin, UpdateView):
         self.model = model_   
         return super(ModuleContentUpdateView, self).dispatch(request, module_id, content_id, pk)
 
-    def get_success_url(self):
-        return reverse('courses:course-module', kwargs={'pk': self.kwargs['pk'], "module_id" : self.kwargs['module_id']})
-    
+class ModuleContentCreateView(PermissionRequiredMixin, ContentMixin, CreateView):
+    model = None
+    fields = []
+    template_name='courses/manage/update_create_content.html'
+    permission_required = 'contents.add_content'
+
+    def dispatch(self, request, module_id,  model_name, pk):
+        model_ = self.get_model(model_name)
+        self.get_fields(model_)
+        logger.debug(self.fields)
+        self.model = model_   
+        return super(ModuleContentCreateView, self).dispatch(request, module_id,  model_name, pk)
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        # logger.debug('fdf ', form)
+        print('%%%%%%%%%', type(form.instance), form.instance)
+        return super(ModuleContentCreateView, self).form_valid(form)

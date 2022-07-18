@@ -23,6 +23,7 @@ urlpatterns = [
     # manage content
     path('<int:pk>/modules/<int:module_id>/content/<int:content_id>/delete/', views.ModuleContentDeleteView.as_view(), name='delete-content'),
     path('<int:pk>/modules/<int:module_id>/content/<int:content_id>/update/', views.ModuleContentUpdateView.as_view(), name='update-content'),
+    path('<int:pk>/modules/<int:module_id>/model/<str:model_name>/', views.ModuleContentCreateView.as_view(), name='create-content'),
 
 ]
 
