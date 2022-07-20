@@ -3,6 +3,12 @@
 
 {% block add_css %}
     <link rel="stylesheet" href="{%  static 'students/css/students.css' %}">
+    <style>
+      .btn-font{
+        font-size:12px;
+      }
+      
+    </style>
 {% endblock add_css %}
 
 {% block content %}
@@ -20,7 +26,7 @@
                     <ul>
                         {% for module in object.modules.all %}
                         <li data-id='{{ module.id }}' >
-                          <a href="{% url 'students:student-course-module-detail' pk=object.id module_id=module.id %}">
+                          <a href="{% url 'courses:course-module' pk=object.id module_id=module.id %}">
                         
                             <i style="font-weight:bold;" class="fa fa-angle-double-left"></i>
         
@@ -45,14 +51,22 @@
                       
                       <form method="post" action="{% url 'courses:delete-content'  pk=object.pk module_id=module.id content_id=content.pk %}">
                         {% csrf_token %}
-                        <input class='btn btn-sm btn-danger' type="submit" name="" value="delete item">
+                        <input  class='btn btn-sm btn-danger p-1 btn-font' type="submit" name="" value="delete">
                       </form>
-                      <a style="margin-left:5px;" class='btn btn-sm btn-outline-primary' href="{% url 'courses:update-content' pk=object.pk module_id=module.id content_id=content.pk %}">
+                      <a style="margin-left:5px;" class='btn btn-sm btn-outline-primary p-1 btn-font' href="{% url 'courses:update-content' pk=object.pk module_id=module.id content_id=content.pk %}">
                         update
                       </a>
                     </div>
                 {% endwith %}
                 {% endfor %}
+                <div style="margin-top:20px;">
+                <h4>add item</h4>
+                <a href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='text' %}" class="btn btn-dark btn-sm p-0 btn-font">add text</a>
+                <a href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='image' %}" class="btn btn-dark btn-font">add image</a>
+                <a href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='video' %}" class="btn btn-dark btn-font">add video</a>
+                <a href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='file' %}" class="btn btn-font">add file</a>
+                </div>
+
             </div>
         </div> <!-- outter row -->
         <div id="mySidebar" class="sidebar  ">
