@@ -39,13 +39,14 @@ class Dev(Configuration):
         'homepage',
         'courses',
         'students',
-
+        'api',
         # third packageparty
         'allauth',
         'allauth.account',
         'allauth.socialaccount',
         "debug_toolbar",
         'embed_video',
+        'rest_framework',
 
         
     ]
@@ -189,6 +190,12 @@ class Dev(Configuration):
         'root': {
             'level': 'DEBUG',
         },
+    }
+
+    REST_FRAMEWORK = {
+        "DEFAULT_PERMISSION_CLASSES" : [
+            "rest_framework.permissions.IsAuthenticatedOrReadOnly", # GET
+        ],
     }
 
 class Prod(Dev):
