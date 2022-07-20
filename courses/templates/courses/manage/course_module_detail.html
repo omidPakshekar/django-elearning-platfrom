@@ -61,10 +61,10 @@
                 {% endfor %}
                 <div style="margin-top:20px;">
                 <h4>add item</h4>
-                <a href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='text' %}" class="btn btn-dark btn-sm p-0 btn-font">add text</a>
-                <a href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='image' %}" class="btn btn-dark btn-font">add image</a>
-                <a href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='video' %}" class="btn btn-dark btn-font">add video</a>
-                <a href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='file' %}" class="btn btn-font">add file</a>
+                <a style="background-color:#0f3bbd	;" href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='text' %}" class="btn  btn-sm p-1 btn-dark btn-font">add text</a>
+                <a style="background-color:#0f3bbd	;"  href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='image' %}" class="btn p-1 btn-dark btn-font">add image</a>
+                <a style="background-color:#0f3bbd	;" href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='video' %}" class="btn p-1 btn-dark btn-font">add video</a>
+                <a  style="background-color:#0f3bbd	;" href="{% url 'courses:create-content' pk=object.pk module_id=module.id model_name='file' %}" class="btn p-1 btn-dark btn-font">add file</a>
                 </div>
 
             </div>
