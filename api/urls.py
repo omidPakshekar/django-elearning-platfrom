@@ -1,8 +1,11 @@
 from django.urls import path, include
 from . import views
 
+from rest_framework.routers import DefaultRouter
+router = DefaultRouter()
+router.register('course', views.CourseViewSet)
+
 app_name='api'
 urlpatterns = [
-    path('', views.ProductListCreateView.as_view()),
-    
+    path('',  include(router.urls)),
 ]
