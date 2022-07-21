@@ -3,6 +3,9 @@ from django.conf import settings
 from .fields import OrderField
 from django.contrib.contenttypes.fields import ContentType, GenericForeignKey
 
+from versatileimagefield.fields import VersatileImageField, PPOIField
+
+
 User = settings.AUTH_USER_MODEL
 
 
@@ -28,7 +31,8 @@ class Category(models.Model):
 class Course(models.Model):
     owner     = models.ForeignKey(User, related_name = 'courses_created', on_delete=models.CASCADE)
     category  = models.ForeignKey(Category, related_name='courses', on_delete=models.CASCADE)
-    photo     = models.ImageField(upload_to=get_course_image_filepath, null=True, blank=True, default=get_default_image)    
+    image     = VersatileImageField(ppoi_field="ppoi", upload_to=get_course_image_filepath, null=True, blank=True, default=get_default_image )
+    ppoi      = PPOIField(null=True, blank=True)
     title     = models.CharField(max_length=100)
     slug      = models.SlugField(max_length=200, unique=True)
     overview  = models.TextField()

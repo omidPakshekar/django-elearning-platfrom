@@ -47,7 +47,7 @@ class Dev(Configuration):
         "debug_toolbar",
         'embed_video',
         'rest_framework',
-
+        'versatileimagefield',
         
     ]
 
@@ -196,6 +196,8 @@ class Dev(Configuration):
         "DEFAULT_PERMISSION_CLASSES" : [
             "rest_framework.permissions.IsAuthenticatedOrReadOnly", # GET
         ],
+        "DEFAULT_PAGINATION_CLASS" : "rest_framework.pagination.PageNumberPagination",
+        "PAGE_SIZE" : 4,
     }
 
 class Prod(Dev):
