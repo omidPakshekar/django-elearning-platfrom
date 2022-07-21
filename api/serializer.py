@@ -7,7 +7,6 @@ class StudentInlineSerializer(serializers.Serializer):
     username = serializers.CharField(read_only=True)
     
 class CourseListSeriaLizer(serializers.ModelSerializer):
-    
     students = StudentInlineSerializer(many=True)
     class Meta:
         model = Course
