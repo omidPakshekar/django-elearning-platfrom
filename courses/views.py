@@ -18,8 +18,8 @@ class CourseListView(ListView):
 
     def get_queryset(self):
         if 'mine' in self.request.get_full_path():
-               return Course.objects.filter(owner=self.request.user).only('title', 'photo')
-        return Course.objects.only('title', 'photo')
+               return Course.objects.filter(owner=self.request.user).only('title', 'image', 'ppoi')
+        return Course.objects.only('title', 'image', 'ppoi')
     
 class CourseDetailView(DetailView):
     model = Course
@@ -45,7 +45,7 @@ class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin):
     model = Course
 
 class OwnerCourseEditMixin(OwnerCourseMixin, OwnerEditMixin):
-    fields = ['category', 'title', 'slug', 'photo', 'overview']
+    fields = ['category', 'title', 'slug', 'image', 'overview', 'ppoi']
     success_url = reverse_lazy('courses:course-list')
     template_name = 'courses/manage/course_form.html'
 
