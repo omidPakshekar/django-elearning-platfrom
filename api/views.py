@@ -17,8 +17,11 @@ from rest_framework import permissions
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
-    permission_classes = [permissions.IsAdminUser, IsOwnerOrReadOnly]
-
+    # permission_classes = [permissions.IsAdminUser, IsOwnerOrReadOnly]
+    permission_classes_per_method = {
+        "retrieve" : IsOwnerOrReadOnly,
+        "create" : permissions.IsAdminUser
+    }
     def get_serializer_class(self):
         if self.action in "list":
             return CourseListSeriaLizer
