@@ -48,7 +48,8 @@ class Dev(Configuration):
         'embed_video',
         'rest_framework',
         'versatileimagefield',
-        
+        'rest_framework_simplejwt',
+
     ]
 
     MIDDLEWARE = [
@@ -193,6 +194,11 @@ class Dev(Configuration):
     }
 
     REST_FRAMEWORK = {
+        "DEFAULT_AUTHENTICATION_CLASSES" : [
+            "rest_framework.authentication.SessionAuthentication",
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
+        ],
+
         "DEFAULT_PERMISSION_CLASSES" : [
             "rest_framework.permissions.IsAuthenticatedOrReadOnly", # GET
         ],

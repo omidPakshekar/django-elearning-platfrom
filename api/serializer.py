@@ -17,7 +17,7 @@ class CourseListSeriaLizer(serializers.ModelSerializer):
     owner = UserSerializer()
     class Meta:
         model = Course
-        fields = "__all__"
+        exclude = ['ppoi']
 
 class CourseCreateSeriaLizer(serializers.ModelSerializer):
     class Meta:
