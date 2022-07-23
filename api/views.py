@@ -17,16 +17,29 @@ from rest_framework import permissions
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
-    # permission_classes = [permissions.IsAdminUser, IsOwnerOrReadOnly]
-    permission_classes_per_method = {
-        "retrieve" : IsOwnerOrReadOnly,
-        "create" : permissions.IsAdminUser
-    }
+    # permission_classes = [IsOwnerOrReadOnly]
+
     def get_serializer_class(self):
-        if self.action in "list":
+        if self.action in ["list", "retrieve"]:
             return CourseListSeriaLizer
         return CourseCreateSeriaLizer
-    
+
+    """
+        cache list method for 3 minutes
+    """    
     @method_decorator(cache_page(180), vary_on_headers('cookie'))
     def list(self, *args, **kwargs):
         return super(CourseViewSet, self).list(*args, **kwargs)
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions per method.
+        """
+        permission_classes = []
+        if self.action in ['create', 'destroy']:
+            permission_classes =  [permissions.IsAdminUser]
+        elif self.action in ['update', 'partial_update']:
+            permission_classes = [IsOwnerOrReadOnly]
+        return [permission() for permission in permission_classes]
+        
+

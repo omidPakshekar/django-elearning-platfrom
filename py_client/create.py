@@ -22,12 +22,12 @@ if auth_response.status_code == 200:
         "Authorization" : f"Bearer {token}"
     }
     data = {
-        "title" : "create with api2",
-        "slug" : "apislug2",
-        "overview" : "it's simple api2222222222222",
+        "title" : "create with api4",
+        "slug" : "apislug4",
+        "overview" : "it's simple api4",
         "owner" : 2,
         "category" : 2,
-        "students" : [3],
+        "students" : [1, 3],
     }
     get_response = requests.post( endpoint, headers=headers, json=data) # HTTP request
     data = get_response.json()
