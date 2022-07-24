@@ -9,7 +9,7 @@ from django.views.decorators.vary import vary_on_headers
 
 from .serializer import CourseListSeriaLizer, CourseCreateSeriaLizer
 from courses.models import Course
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, UserPermission
 from rest_framework import permissions
 
 
@@ -17,7 +17,7 @@ from rest_framework import permissions
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
-    # permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [UserPermission]
 
     def get_serializer_class(self):
         if self.action in ["list", "retrieve"]:
@@ -31,15 +31,16 @@ class CourseViewSet(viewsets.ModelViewSet):
     def list(self, *args, **kwargs):
         return super(CourseViewSet, self).list(*args, **kwargs)
 
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions per method.
-        """
-        permission_classes = []
-        if self.action in ['create', 'destroy']:
-            permission_classes =  [permissions.IsAdminUser]
-        elif self.action in ['update', 'partial_update']:
-            permission_classes = [IsOwnerOrReadOnly]
-        return [permission() for permission in permission_classes]
+    # def get_permissions(self):
+    #     """
+    #     Instantiates and returns the list of permissions per method.
+    #     """
+    #     permission_classes = []
+    #     if self.action in ['create', 'destroy']:
+    #         self.permission_classes =  [permissions.IsAdminUser]
+    #     if self.action in ['update', 'partial_update', 'get']:
+    #         self.permission_classes = [permissions.IsAdminUser or IsOwnerOrReadOnly]
+        
+    #     return super().get_permissions()
         
 

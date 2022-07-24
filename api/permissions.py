@@ -14,3 +14,35 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         
         # Instance must have an attribute named `owner`.
         return obj.owner == request.user
+
+
+class UserPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if view.action == 'list':
+            return True
+        elif view.action == 'create':
+            if request.user.is_anonymous:
+                return False
+            return  request.user.is_staff
+        elif view.action in ['retrieve', 'update', 'partial_update', 'destroy']:
+            return True
+        else:
+            return False
+                                                                                                
+    def has_object_permission(self, request, view, obj):
+        # Deny actions on objects if the user is not authenticated
+        # if not request.user.is_authenticated():
+        #     return False
+        if view.action == 'retrieve':
+            return True
+        elif view.action in ['update', 'partial_update']:
+            if request.user.is_anonymous:
+                return False
+            return obj.owner == request.user or request.user.is_admin
+        elif view.action == 'destroy':
+            if request.user.is_anonymous:
+                return False
+            return request.user.is_admin
+        else:
+            return False
