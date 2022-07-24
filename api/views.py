@@ -1,16 +1,17 @@
 from django.urls import reverse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import generics, viewsets
-
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
 
+from rest_framework.decorators import api_view, action 
+from rest_framework.response import Response
+from rest_framework import generics, viewsets
+from rest_framework.exceptions import PermissionDenied
+from rest_framework import permissions
+
 from .serializer import CourseListSeriaLizer, CourseCreateSeriaLizer
 from courses.models import Course
 from .permissions import IsOwnerOrReadOnly, UserPermission
-from rest_framework import permissions
 
 
 
@@ -31,16 +32,13 @@ class CourseViewSet(viewsets.ModelViewSet):
     def list(self, *args, **kwargs):
         return super(CourseViewSet, self).list(*args, **kwargs)
 
-    # def get_permissions(self):
-    #     """
-    #     Instantiates and returns the list of permissions per method.
-    #     """
-    #     permission_classes = []
-    #     if self.action in ['create', 'destroy']:
-    #         self.permission_classes =  [permissions.IsAdminUser]
-    #     if self.action in ['update', 'partial_update', 'get']:
-    #         self.permission_classes = [permissions.IsAdminUser or IsOwnerOrReadOnly]
-        
-    #     return super().get_permissions()
-        
-
+    @action(methods=["get"], detail=False, name="Posts by the logged in user")
+    def mine(self, request):
+        if request.user.is_anonymous:
+            raise PermissionDenied("You must be logged in to see which Posts are yours")
+        courses = self.get_queryset().filter(owner=request.user)
+        page = self.paginate_queryset(courses)
+        if page is not None:
+            serializer = CourseListSeriaLizer(page, many=True, context={"request": request})
+        serializer = CourseListSeriaLizer(courses, many=True, context={"request": request})
+        return Response(serializer.data)

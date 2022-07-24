@@ -19,7 +19,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 class UserPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        if view.action == 'list':
+        if view.action in ['list', 'mine']:
             return True
         elif view.action == 'create':
             if request.user.is_anonymous:
