@@ -18,8 +18,8 @@ class CourseListView(ListView):
 
     def get_queryset(self):
         if 'mine' in self.request.get_full_path():
-               return Course.objects.filter(owner=self.request.user).only('title', 'image', 'ppoi')
-        return Course.objects.only('title', 'image', 'ppoi')
+               return Course.objects.filter(owner=self.request.user).only('title', 'photo')
+        return Course.objects.only('title', 'photo')
     
 class CourseDetailView(DetailView):
     model = Course
@@ -37,7 +37,6 @@ class OwnerMixin(object):
 
 class OwnerEditMixin(object):
     def form_valid(self, form):
-        print('form=',form)
         form.instance.owner = self.request.user
         return super(OwnerEditMixin, self).form_valid(form)
 
@@ -45,7 +44,7 @@ class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin):
     model = Course
 
 class OwnerCourseEditMixin(OwnerCourseMixin, OwnerEditMixin):
-    fields = ['category', 'title', 'slug', 'image', 'overview', 'ppoi']
+    fields = ['category', 'title', 'slug', 'photo', 'overview']
     success_url = reverse_lazy('courses:course-list')
     template_name = 'courses/manage/course_form.html'
 
@@ -192,7 +191,6 @@ class ModuleContentCreateView(PermissionRequiredMixin, ContentMixin, CreateView)
     def form_valid(self, form):
         form.instance.owner = self.request.user
         object = form.save()
-        print('object.id=', object.id)
         Content.objects.create(module= self.module, item=object)
         return redirect('courses:course-module', pk = self.kwargs['pk'], module_id= self.kwargs['module_id'])
 

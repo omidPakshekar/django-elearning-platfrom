@@ -10,7 +10,7 @@ class ModuleInline(admin.StackedInline):
     model = Module
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ['title', 'category', 'created']
+    list_display = ['id', 'title', 'category', 'created']
     list_fiter = ['created', 'category']
     search_fields = ['title', 'overview']
     prepopulated_fields = {'slug': ('title',)}

@@ -94,11 +94,15 @@ class Dev(Configuration):
     # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
     DATABASES = {
-        "default": dj_database_url.config(default=f"sqlite:///{BASE_DIR}/db.sqlite3"),
-        "alternative": dj_database_url.config(
-            "ALTERNATIVE_DATABASE_URL",
-            default=f"sqlite:///{BASE_DIR}/alternative_db.sqlite3",
-        ),
+        # "default": dj_database_url.config(default=f"sqlite:///{BASE_DIR}/db.sqlite3"),
+        # "alternative": dj_database_url.config(
+        #     "ALTERNATIVE_DATABASE_URL",
+        #     default=f"sqlite:///{BASE_DIR}/alternative_db.sqlite3",
+        # ),
+        'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'newdb',
+    }
     }
 
 

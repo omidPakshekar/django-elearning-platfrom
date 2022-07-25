@@ -27,12 +27,13 @@ class Category(models.Model):
         return self.title
 
 
-
+    
 class Course(models.Model):
     owner     = models.ForeignKey(User, related_name = 'courses_created', on_delete=models.CASCADE)
     category  = models.ForeignKey(Category, related_name='courses', on_delete=models.CASCADE)
-    image     = VersatileImageField(ppoi_field="ppoi", upload_to=get_course_image_filepath, null=True, blank=True, default=get_default_image )
-    ppoi      = PPOIField(null=True, blank=True)
+    # image     = VersatileImageField(ppoi_field="ppoi", upload_to=get_course_image_filepath, null=True, blank=True, default=get_default_image )
+    # ppoi      = PPOIField(null=True, blank=True)
+    photo     = models.ImageField(upload_to=get_course_image_filepath, null=True, blank=True, default=get_default_image )
     title     = models.CharField(max_length=100)
     slug      = models.SlugField(max_length=200, unique=True)
     overview  = models.TextField()
