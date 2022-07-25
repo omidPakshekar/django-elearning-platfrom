@@ -9,9 +9,9 @@ from rest_framework import generics, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import permissions
 
-from .serializer import CourseListSeriaLizer, CourseCreateSeriaLizer
-from courses.models import Course
-from .permissions import IsOwnerOrReadOnly, UserPermission
+from .serializer import CourseListSeriaLizer, CourseCreateSeriaLizer, ModuleListSerializer
+from courses.models import *
+from .permissions import IsOwnerOrReadOnly, UserPermission, ModulePermission
 
 
 
@@ -54,3 +54,15 @@ class CourseViewSet(viewsets.ModelViewSet):
             serializer = CourseListSeriaLizer(page, many=True, context={"request": request})
         serializer = CourseListSeriaLizer(courses, many=True, context={"request": request})
         return Response(serializer.data)
+
+
+
+
+class ModuleViewSet(viewsets.ModelViewSet):
+    queryset = Module.objects.all()
+    permission_classes = [ModulePermission]
+
+    def get_serializer_class(self):
+        # if self.action in ["list", "retrieve"]:
+        #     return CourseListSeriaLizer
+        return ModuleListSerializer

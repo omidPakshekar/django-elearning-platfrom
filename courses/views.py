@@ -58,7 +58,9 @@ class CourseDeleteView(PermissionRequiredMixin, OwnerCourseMixin, DeleteView):
     permission_required = 'courses.delete_course'
     success_url = reverse_lazy('courses:course-list')
 
-
+"""
+    change, add, delete module 
+"""
 class CourseModuleListView(View):
     course = None
     template_name = 'courses/manage/module_list.html'
