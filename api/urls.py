@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshVie
 from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register('course', views.CourseViewSet)
-router.register('module', views.ModuleViewSet)
+router.register('module', views.ModuleViewSet,basename="module")
 
 
 app_name='api'

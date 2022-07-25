@@ -17,7 +17,9 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
 
 class UserPermission(permissions.BasePermission):
-
+    """
+        Deny create actions on objects if the user is not admin
+    """ 
     def has_permission(self, request, view):
         if view.action in ['list', 'mine', 'students']:
             return True
@@ -31,7 +33,6 @@ class UserPermission(permissions.BasePermission):
             return False
                                                                                                 
     def has_object_permission(self, request, view, obj):
-        # Deny actions on objects if the user is not authenticated
         # if not request.user.is_authenticated():
         #     return False
         if view.action == 'retrieve':
@@ -48,24 +49,11 @@ class UserPermission(permissions.BasePermission):
             return False
 
 
-class ModulePermission(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        if view.action in ['list', ]:
-            return True
-        elif view.action == 'create':
-            if request.user.is_anonymous:
-                return False
-            return  request.user.is_staff
-        elif view.action in ['retrieve', 'update', 'partial_update', 'destroy']:
-            return True
-        else:
-            return False
-                                                                                                
+class ModulePermission(UserPermission):
+    """
+        this class extends from userPermission
+    """                                                         
     def has_object_permission(self, request, view, obj):
-        # Deny actions on objects if the user is not authenticated
-        # if not request.user.is_authenticated():
-        #     return False
         if view.action == 'retrieve':
             return True
         elif view.action in ['update', 'partial_update']:

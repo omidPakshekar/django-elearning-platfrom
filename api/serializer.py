@@ -15,15 +15,13 @@ class UserSerializer(serializers.ModelSerializer):
 class ModuleListSerializer(serializers.ModelSerializer):    
     class Meta:
         model = Module
-        fields = ["title", 'description']
+        fields = "__all__"
 
 class CourseListSeriaLizer(serializers.ModelSerializer):
     students = StudentInlineSerializer(many=True)
-    modules = ModuleListSerializer(source='modules.all', many=True)    
-    # modules_url = serializers.HyperlinkedIdentityField(
-    #     view_name='product-detail-api',
-    #     lookup_field='pk'
-    # )
+    modules = serializers.HyperlinkedIdentityField(
+        source='modules.all', view_name='api:module-detail',
+        lookup_field='pk', many=True)    
     owner = UserSerializer()
 
     class Meta:
