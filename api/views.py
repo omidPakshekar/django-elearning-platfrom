@@ -9,7 +9,7 @@ from rest_framework import generics, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import permissions
 
-from .serializer import CourseListSeriaLizer, CourseCreateSeriaLizer, ModuleListSerializer
+from .serializer import CourseListSeriaLizer, CourseCreateSeriaLizer, ModuleListSerializer, ContentListSerializer
 from courses.models import *
 from .permissions import IsOwnerOrReadOnly, UserPermission, ModulePermission
 
@@ -63,6 +63,11 @@ class ModuleViewSet(viewsets.ModelViewSet):
     permission_classes = [ModulePermission]
 
     def get_serializer_class(self):
-        # if self.action in ["list", "retrieve"]:
-        #     return CourseListSeriaLizer
         return ModuleListSerializer
+
+class ContentViewSet(viewsets.ModelViewSet):
+    queryset = Content.objects.all()
+    permission_classes = [ModulePermission]
+
+    def get_serializer_class(self):
+        return ContentListSerializer

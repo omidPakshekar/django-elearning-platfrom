@@ -89,13 +89,14 @@ class ItemBase(models.Model):
 
     
 class Text(ItemBase):
-    content  = models.TextField(blank=True)
+    content     = models.TextField(blank=True)
 
 class Image(ItemBase):
-    file     = models.FileField(upload_to= 'images')
+    image       = models.ImageField(upload_to= 'images')
+    # placeholder = models.CharField(max_length=40)
 
 class File(ItemBase):
     file     = models.FileField(upload_to = 'file')
 
 class Video(ItemBase):
-    url      = models.URLField()
+    url         = models.URLField()
