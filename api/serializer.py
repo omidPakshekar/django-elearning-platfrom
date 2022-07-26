@@ -80,13 +80,14 @@ class ContentListSerializer(serializers.ModelSerializer):
         fields = "__all__"
     
     def get_content_type(self, obj):
-        print(type(obj.item))
-
-        if obj.item._meta.model_name == 'text':
-            # print(TextSeriaLizer(obj.item))
+        model_name = obj.item._meta.model_name 
+        if model_name == 'text':
             return (TextSeriaLizer(obj.item).data)
-        if obj.item._meta.model_name == 'image':
+        if model_name == 'image':
             return ImageSeriaLizer(obj.item, context={'contentContext' : self.context}).data
+        if model_name == 'video':
+            return (VideoSeriaLizer(obj.item).data)
+        if model_name == 'file':
+            return (FileSeriaLizer(obj.item).data)
+        
         return obj.item._meta.model_name
-    # def get_content(self, obj):
-    # #     return 
