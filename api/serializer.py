@@ -2,7 +2,7 @@
 from rest_framework import serializers
 from courses.models import *
 from students.models import CustomeUserModel
-
+from django.shortcuts import get_object_or_404
 
 class StudentInlineSerializer(serializers.Serializer):
     username = serializers.CharField(read_only=True)
@@ -21,30 +21,34 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['email']
 
 class ModuleListSerializer(serializers.ModelSerializer):    
-    # contents_url = serializers.HyperlinkedIdentityField(
-        # source='contents.all', view_name='api:content-detail',
-        # lookup_field='pk', many=True)    
-    contents = ContentInlineSerializer(many=True)
+    contents_url = serializers.HyperlinkedIdentityField(
+        source='contents.all', view_name='api:content-detail',
+        lookup_field='pk', many=True, read_only=True)    
+    contents = ContentInlineSerializer(many=True, write_only=True)
 
     class Meta:
         model = Module
         fields = "__all__"
 
     def update(self,instance,validated_data):
-        print('********************', instance.id)
-        print('validated_data', (validated_data.keys))
+        """
+            for updating module contents 
+            we first change content module foreign key to module 5
+            then update it
+        """
+        contents = validated_data.pop('contents')
+        content_list = []
+        for i in contents:
+            content_list.append(get_object_or_404(Content, id=i['id']))
+        # change module content to null
+        for i in instance.contents.all():
+            i.module = Module.objects.get(id=5)
+            i.save()
+        # add new content to module
+        instance.contents.set(content_list) 
         for attr, value in validated_data.items():
-            if not attr == 'contents':
-                setattr(instance, attr, value)
-        print()
-        contents = self.context["request"].data['contents']
-        instance.contents
-        print(instance.contents.all())
-        # for i in contents:
-
+            setattr(instance, attr, value)
         instance.save()
-        print('f', validated_data['contents'][0])
-        
         return instance
 
 class CourseListSeriaLizer(serializers.ModelSerializer):
