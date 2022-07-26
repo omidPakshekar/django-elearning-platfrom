@@ -7,19 +7,45 @@ from students.models import CustomeUserModel
 class StudentInlineSerializer(serializers.Serializer):
     username = serializers.CharField(read_only=True)
 
+class ContentInlineSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+
+    class Meta:
+        model = Content
+        fields = ('id', )
+        
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomeUserModel
         fields = ['email']
 
 class ModuleListSerializer(serializers.ModelSerializer):    
-    contents = serializers.HyperlinkedIdentityField(
-        source='contents.all', view_name='api:content-detail',
-        lookup_field='pk', many=True)    
-    
+    # contents_url = serializers.HyperlinkedIdentityField(
+        # source='contents.all', view_name='api:content-detail',
+        # lookup_field='pk', many=True)    
+    contents = ContentInlineSerializer(many=True)
+
     class Meta:
         model = Module
         fields = "__all__"
+
+    def update(self,instance,validated_data):
+        print('********************', instance.id)
+        print('validated_data', (validated_data.keys))
+        for attr, value in validated_data.items():
+            if not attr == 'contents':
+                setattr(instance, attr, value)
+        print()
+        contents = self.context["request"].data['contents']
+        instance.contents
+        print(instance.contents.all())
+        # for i in contents:
+
+        instance.save()
+        print('f', validated_data['contents'][0])
+        
+        return instance
 
 class CourseListSeriaLizer(serializers.ModelSerializer):
     students = StudentInlineSerializer(many=True)
@@ -39,11 +65,6 @@ class CourseCreateSeriaLizer(serializers.ModelSerializer):
         model = Course
         fields = "__all__"
 
-
-class ContentTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Content
-        fields = "__all__"
 
 class ImageSeriaLizer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()

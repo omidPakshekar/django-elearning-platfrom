@@ -68,13 +68,23 @@ class ModulePermission(UserPermission):
             return False
 
 class ContentPermission(permissions.BasePermission):
-    """f
+    """
+        create      --> user muust be staff
+        list        --> user must be admin
+        update      --> user must be owner of course or staff       
+        retreive --> user must be student or admin or owner
     """                                                         
+    def is_owner(self, request, obj):
+        return request.user == obj.module.course.owner
+    
+    def is_student(self, request, obj):
+        return request.user in obj.module.course.students.all()
+    
     def has_permission(self, request, view):
         if view.action in ['list']:
             if request.user.is_anonymous:
                 return False
-            return request.user.is_admin
+            return request.user.is_staff
         elif view.action == 'create':
             if request.user.is_anonymous:
                 return False
@@ -85,16 +95,14 @@ class ContentPermission(permissions.BasePermission):
             return False
                                                                                                 
     def has_object_permission(self, request, view, obj):
-        # if not request.user.is_authenticated():
-        #     return False
         if view.action == 'retrieve':
             if request.user.is_anonymous:
                 return False
-            return request.user in obj.module.course.students.all() or request.user.is_admin
+            return self.is_student(request, obj) or self.is_owner(request, obj) or request.user.is_admin
         elif view.action in ['update', 'partial_update']:
             if request.user.is_anonymous:
                 return False
-            return request.user == obj.module.course.owner or request.user.is_admin
+            return self.is_owner(request, obj) or request.user.is_staff
         elif view.action == 'destroy':
             if request.user.is_anonymous:
                 return False
