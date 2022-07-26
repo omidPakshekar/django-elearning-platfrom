@@ -27,7 +27,9 @@ class CourseListSeriaLizer(serializers.ModelSerializer):
         source='modules.all', view_name='api:module-detail',
         lookup_field='pk', many=True)    
     owner = UserSerializer()
-
+    # def get_file(self, obj):
+    #     print('f', obj.photo)
+    #     return obj.photo.url
     class Meta:
         model = Course
         fields = "__all__"
@@ -44,17 +46,14 @@ class ContentTypeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class ImageSeriaLizer(serializers.ModelSerializer):
-    # file = serializers.HyperlinkedIdentityField(
-    #         source='modules.all', view_name='api:module-detail',
-    #         lookup_field='pk', many=True)
-    file = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
     class Meta:
         model = Image
         fields = "__all__"
-    def get_file(self, instance):
-        # returning image url if there is an image else blank string
-        print('hiii', instance.image.url)
-        return instance.image.url if instance.image else ''
+    def get_image_url(self, instance):
+        # get request from contentListSeriaLizerClass then create uri 
+        request = self.context['contentContext'].get('request')
+        return request.build_absolute_uri(instance.image.url)
 
 class VideoSeriaLizer(serializers.ModelSerializer):
     class Meta:
@@ -82,11 +81,12 @@ class ContentListSerializer(serializers.ModelSerializer):
     
     def get_content_type(self, obj):
         print(type(obj.item))
+
         if obj.item._meta.model_name == 'text':
             # print(TextSeriaLizer(obj.item))
             return (TextSeriaLizer(obj.item).data)
         if obj.item._meta.model_name == 'image':
-            return ImageSeriaLizer(obj.item).data
+            return ImageSeriaLizer(obj.item, context={'contentContext' : self.context}).data
         return obj.item._meta.model_name
     # def get_content(self, obj):
     # #     return 
