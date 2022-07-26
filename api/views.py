@@ -11,7 +11,7 @@ from rest_framework import permissions
 
 from .serializer import CourseListSeriaLizer, CourseCreateSeriaLizer, ModuleListSerializer, ContentListSerializer
 from courses.models import *
-from .permissions import IsOwnerOrReadOnly, UserPermission, ModulePermission
+from .permissions import ContentPermission, UserPermission, ModulePermission
 
 
 
@@ -67,7 +67,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
 
 class ContentViewSet(viewsets.ModelViewSet):
     queryset = Content.objects.all()
-    permission_classes = [ModulePermission]
+    permission_classes = [ContentPermission]
 
     def get_serializer_class(self):
         return ContentListSerializer

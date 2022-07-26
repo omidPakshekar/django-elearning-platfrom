@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ModuleListSerializer(serializers.ModelSerializer):    
     contents = serializers.HyperlinkedIdentityField(
-        source='contents.all', view_name='api:contents-detail',
+        source='contents.all', view_name='api:content-detail',
         lookup_field='pk', many=True)    
     
     class Meta:

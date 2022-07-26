@@ -66,3 +66,21 @@ class ModulePermission(UserPermission):
             return request.user.is_admin
         else:
             return False
+
+class ContentPermission(UserPermission):
+    """
+        this class extends from userPermission
+    """                                                         
+    def has_object_permission(self, request, view, obj):
+        if view.action == 'retrieve':
+            return True
+        elif view.action in ['update', 'partial_update']:
+            if request.user.is_anonymous:
+                return False
+            return obj.module.course.owner == request.user or request.user.is_admin
+        elif view.action == 'destroy':
+            if request.user.is_anonymous:
+                return False
+            return request.user.is_admin
+        else:
+            return False

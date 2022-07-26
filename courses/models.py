@@ -1,7 +1,8 @@
+from typing import Generic
 from django.db import models
 from django.conf import settings
 from .fields import OrderField
-from django.contrib.contenttypes.fields import ContentType, GenericForeignKey
+from django.contrib.contenttypes.fields import ContentType, GenericForeignKey, GenericRelation
 
 from versatileimagefield.fields import VersatileImageField, PPOIField
 
@@ -76,11 +77,11 @@ class Content(models.Model):
     
 
 class ItemBase(models.Model):
-    owner       = models.ForeignKey(User, related_name="%(class)s_related", on_delete=models.CASCADE)
-    title       = models.CharField(max_length = 250, blank=True)
-    created_time= models.DateTimeField(auto_now_add = True)
-    updated_time= models.DateTimeField(auto_now = True)
-
+    owner        = models.ForeignKey(User, related_name="%(class)s_related", on_delete=models.CASCADE)
+    title        = models.CharField(max_length = 250, blank=True)
+    created_time = models.DateTimeField(auto_now_add = True)
+    updated_time = models.DateTimeField(auto_now = True)
+    model_content= GenericRelation(Content)
     class Meta:
         abstract = True
 
