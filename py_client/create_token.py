@@ -2,7 +2,7 @@ from email import header
 import requests
 from getpass import getpass
 
-auth_endpoint = "http://127.0.0.1:8000/api/token/"
+auth_endpoint = "http://127.0.0.1:8000/api/v1/token/"
 
 password = getpass()
 email = input('your email?')
