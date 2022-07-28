@@ -75,6 +75,23 @@ class CourseApiTestCase(TestCase):
         self.assertEqual(course.category.id, data['category'])
         self.assertEqual(course.students.count(), 1)
 
+    def test_course_creation_unauthorized(self):
+        # logout
+        self.client.credentials()
+        data = {
+            "title" : "unathorized",
+            "slug" : "unathorized2",
+            "overview" : "it's simple man",
+            "owner" : 1,
+            "category" : 1,
+            "students" : [2],
+        }
+        # create course
+        resp = self.client.post('/api/v1/course/', data)
+        # 403 -> unathorized
+        self.assertEqual(resp.status_code, 403)
+        
+
     def test_course_list(self):
         # get courses
         resp = self.client.get('/api/v1/course/')
@@ -90,4 +107,4 @@ class CourseApiTestCase(TestCase):
             self.assertEqual(course.owner.email, course_dict['owner']['email'])
             self.assertEqual(course.category.id, course_dict['category'])
                     
-        
+    
