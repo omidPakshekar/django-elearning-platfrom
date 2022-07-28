@@ -116,5 +116,14 @@ class CourseApiTestCase(TestCase):
                 "category" : 2,
                 "students" : [2],
         }
-        resp2 = self.client.put('/api/v1/course/1/', data)
-        print('status', resp2.json())
+        resp = self.client.put('/api/v1/course/1/', data)
+        self.assertEqual(resp.status_code, 200)
+    
+    def test_course_partial_update(self):
+        data = {
+                "title" : "hello partial",
+            }
+        resp = self.client.patch('/api/v1/course/1/', data)
+        self.assertEqual(resp.status_code, 200)
+
+    

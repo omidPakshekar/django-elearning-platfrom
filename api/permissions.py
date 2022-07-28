@@ -29,7 +29,7 @@ class UserPermission(permissions.BasePermission):
         elif view.action == 'create':
             if request.user.is_anonymous:
                 return False
-            return  self.check_admin_or_staff(request)
+            return  request.user.is_admin or request.user.is_staff
         elif view.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return True
         else:
