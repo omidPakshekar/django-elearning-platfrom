@@ -107,4 +107,14 @@ class CourseApiTestCase(TestCase):
             self.assertEqual(course.owner.email, course_dict['owner']['email'])
             self.assertEqual(course.category.id, course_dict['category'])
                     
-    
+    def test_course_update(self):
+        data = {
+                "title" : "hello world",
+                "slug" : "title1",
+                "overview" : "it's title",
+                "owner" : 1,
+                "category" : 2,
+                "students" : [2],
+        }
+        resp2 = self.client.put('/api/v1/course/1/', data)
+        print('status', resp2.json())

@@ -65,26 +65,6 @@ class ModuleViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return ModuleListSerializer
 
-    # def update(self, request, *args, **kwargs):
-    #     print('^^^(('*5)
-    #     instance = self.get_object()
-    #     # serializer = ModuleListSerializer(instance, data=request.data, partial=False)
-    #     # serializer.is_valid(raise_exception=False)
-
-    #     # print('ser', serializer)
-    #     # print(dir(serializer))
-    #     # print('instance', instance)
-    #     # print('request.dt', request.data)
-    #     # print('pop', request.data.pop('contents_url'))
-    #     # print('-'*5)
-    #     # request.data["contents_url"] = ["http://localhost:8000/api/content/4/"]
-    #     # print(request.data)
-    #     # serializer = self.serialize(instance, data=request.data, partial=True)
-    #     # print(dir(request))
-    #     print('&&&&&')
-    #     # print
-    #     return super().update(request, *args, **kwargs)
-
 class ContentViewSet(viewsets.ModelViewSet):
     queryset = Content.objects.all()
     permission_classes = [ContentPermission]

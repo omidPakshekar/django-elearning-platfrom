@@ -20,13 +20,16 @@ class UserPermission(permissions.BasePermission):
     """
         Deny create actions on objects if the user is not admin
     """ 
+    def check_admin_or_staff(request):
+        return request.user.is_admin or request.user.is_staff
+
     def has_permission(self, request, view):
         if view.action in ['list', 'mine', 'students']:
             return True
         elif view.action == 'create':
             if request.user.is_anonymous:
                 return False
-            return  request.user.is_staff
+            return  self.check_admin_or_staff(request)
         elif view.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return True
         else:
@@ -40,11 +43,11 @@ class UserPermission(permissions.BasePermission):
         elif view.action in ['update', 'partial_update']:
             if request.user.is_anonymous:
                 return False
-            return obj.owner == request.user or request.user.is_admin
+            return obj.owner == request.user or self.check_admin_or_staff(request)
         elif view.action == 'destroy':
             if request.user.is_anonymous:
                 return False
-            return request.user.is_admin
+            return self.check_admin_or_staff(request)
         else:
             return False
 
