@@ -17,6 +17,10 @@ class CourseApiTestCase(TestCase):
         self.user2 = get_user_model().objects.create_user(
             username="test2", email="test2@gmail.com", password="password"
         )
+        # create another non admin 
+        self.user3 = get_user_model().objects.create_user(
+            username="test3", email="test3@gmail.com", password="password"
+        )
         # create category
         self.category = Category.objects.create(title="category1", slug="slugcategory")
         self.category2 = Category.objects.create(title="category2", slug="slugcategory2")
@@ -34,6 +38,13 @@ class CourseApiTestCase(TestCase):
                 slug = "title2",
                 overview = "it's simple man",
                 owner = self.user,
+                category = self.category2
+           ),
+           Course.objects.create(
+                title = "create with aghaye amir",
+                slug = "title3",
+                overview = "it's simple",
+                owner = self.user2,
                 category = self.category2
            ),
 
@@ -98,7 +109,7 @@ class CourseApiTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
         results = resp.json()['results']
         # check size of course that we get
-        self.assertEqual(len(results), 2)
+        self.assertEqual(len(results), 3)
         for course_dict in results:
             course = self.course_lookup[course_dict["id"]]
             self.assertEqual(course.title, course_dict['title'])
@@ -118,7 +129,26 @@ class CourseApiTestCase(TestCase):
         }
         resp = self.client.put('/api/v1/course/1/', data)
         self.assertEqual(resp.status_code, 200)
-    
+        # logout admin user
+        self.client.credentials()
+        # login not admin user
+        auth_endpoint = "/api/v1/token/"
+        data = { "email" : "test2@gmail.com", "password" : "password"}
+        auth_response = self.client.post(auth_endpoint, data)
+        token = auth_response.json()['access']  
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+        data = {
+                "title" : "hello2",
+                "slug" : "title1",
+                "overview" : "it's title",
+                "owner" : 1,
+                "category" : 2,
+                "students" : [2],
+        }
+        resp = self.client.put('/api/v1/course/1/', data)
+        # only admin, staff and owner can update
+        self.assertEqual(resp.status_code, 403)
+            
     def test_course_partial_update(self):
         data = {
                 "title" : "hello partial",
@@ -126,4 +156,35 @@ class CourseApiTestCase(TestCase):
         resp = self.client.patch('/api/v1/course/1/', data)
         self.assertEqual(resp.status_code, 200)
 
-    
+    def test_course_owner_list(self):
+        # get course that we are owner of that course
+        resp = self.client.get('/api/v1/course/mine/')
+        self.assertEqual(resp.status_code, 200)
+        results = resp.json()
+        self.assertEqual(len(results), 2)
+        for course_dict in results:
+            course = self.course_lookup[course_dict["id"]]
+            self.assertEqual(course.title, course_dict['title'])
+            self.assertEqual(course.slug, course_dict['slug'])
+            self.assertEqual(course.overview, course_dict['overview'])
+            self.assertEqual(course.owner.email, course_dict['owner']['email'])
+            self.assertEqual(course.category.id, course_dict['category'])
+
+    def test_course_students(self):
+        # get course that we are joined
+        # logout admin user
+        self.client.credentials()
+        # login not admin user
+        auth_endpoint = "/api/v1/token/"
+        data = { "email" : "test2@gmail.com", "password" : "password"}
+        auth_response = self.client.post(auth_endpoint, data)
+        token = auth_response.json()['access']  
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+        resp = self.client.get('/api/v1/course/students/')
+        results = resp.json()
+        self.assertEqual(len(results), 1)
+        course = Course.objects.get(id=1)
+        self.assertEqual(course.id, results[0]['id'] )
+        self.assertEqual(course.title, results[0]['title'] )
+        self.assertEqual(course.overview, results[0]['overview'] )
+        self.assertEqual(course.owner.email, results[0]['owner']['email'])

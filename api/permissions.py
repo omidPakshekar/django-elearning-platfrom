@@ -43,11 +43,11 @@ class UserPermission(permissions.BasePermission):
         elif view.action in ['update', 'partial_update']:
             if request.user.is_anonymous:
                 return False
-            return obj.owner == request.user or self.check_admin_or_staff(request)
+            return obj.owner == request.user or request.user.is_admin or request.user.is_staff
         elif view.action == 'destroy':
             if request.user.is_anonymous:
                 return False
-            return self.check_admin_or_staff(request)
+            return request.user.is_admin or request.user.is_staff
         else:
             return False
 

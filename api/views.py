@@ -48,7 +48,6 @@ class CourseViewSet(viewsets.ModelViewSet):
         if request.user.is_anonymous:
             raise PermissionDenied("You must be logged in to see which Posts are yours")
         courses = self.get_queryset().filter(students=request.user)
-        print('courses', courses)
         page = self.paginate_queryset(courses)
         if page is not None:
             serializer = CourseListSeriaLizer(page, many=True, context={"request": request})
