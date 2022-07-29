@@ -45,12 +45,12 @@ class ModuleListSerializer(serializers.ModelSerializer):
             content_list.append(get_object_or_404(Content, id=i['id']))
         # change module content to null
         for i in instance.contents.all():
-            i.module = Module.objects.get(id=5)
-            i.save()
-        # add new content to module
-        instance.contents.set(content_list) 
+            if i not in content_list:
+                i.delete()
+        # change attr
         for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+            if attr not in ['contents, contents_url']:
+                setattr(instance, attr, value)
         instance.save()
         return instance
 
@@ -74,28 +74,27 @@ class CourseSeriaLizer(serializers.ModelSerializer):
     
     class Meta:
         model = Course
-        exclude = ["photo"]
+        fields ="__all__"
 
     def update(self, instance, validated_data):
         """
             for updating course modules 
-            we first change  module foreign key to course none 
-            then update it
-
+            we first find module that are changed then delete relation of it's foreign key
         """
         modules = validated_data.pop('modules')['all']
         module_list = []
         for i in modules:
             module_list.append(get_object_or_404(Module, id=i['id']))
-                    
-        # change module content to null
+        # delete module that are changed 
         for i in instance.modules.all():
             if i not in module_list:
                 i.delete()
+        # find studend that are changed
         students = validated_data.pop('students')
         for i in instance.students.all():
             if i not in students:
                 i.course_joined.remove(instance)
+        # update attribute that are changed
         for attr, value in validated_data.items():
             if attr not in ['modules', 'modules_url', 'students']:
                 setattr(instance, attr, value)
