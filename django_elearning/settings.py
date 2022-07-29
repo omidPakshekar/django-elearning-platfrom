@@ -49,7 +49,16 @@ class Dev(Configuration):
         'rest_framework',
         'versatileimagefield',
         'rest_framework_simplejwt',
+        'django_nose',
 
+
+    ]
+    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+    # Tell nose to measure coverage on the 'foo' and 'bar' apps
+    NOSE_ARGS = [
+        '--with-coverage',
+        '--cover-package=api.views,api.permissions,api.serializer,courses.views',
     ]
 
     MIDDLEWARE = [

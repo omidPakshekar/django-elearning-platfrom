@@ -9,7 +9,7 @@ from rest_framework import generics, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import permissions
 
-from .serializer import CourseListSeriaLizer, CourseCreateSeriaLizer, ModuleListSerializer, ContentListSerializer
+from .serializer import CourseListSeriaLizer, CourseSeriaLizer, ModuleListSerializer, ContentListSerializer
 from courses.models import *
 from .permissions import ContentPermission, UserPermission, ModulePermission
 
@@ -21,9 +21,9 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [UserPermission]
 
     def get_serializer_class(self):
-        if self.action in ["list", "retrieve"]:
-            return CourseListSeriaLizer
-        return CourseCreateSeriaLizer
+        # if self.action in ["list"]:
+        #     return CourseListSeriaLizer
+        return CourseSeriaLizer
 
     """
         cache list method for 3 minutes
@@ -53,8 +53,6 @@ class CourseViewSet(viewsets.ModelViewSet):
             serializer = CourseListSeriaLizer(page, many=True, context={"request": request})
         serializer = CourseListSeriaLizer(courses, many=True, context={"request": request})
         return Response(serializer.data)
-
-
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
