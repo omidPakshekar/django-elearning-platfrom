@@ -39,7 +39,6 @@ class Dev(Configuration):
         'homepage',
         'courses',
         'students',
-        'api',
         # third packageparty
         'allauth',
         'allauth.account',
@@ -58,7 +57,7 @@ class Dev(Configuration):
     # Tell nose to measure coverage on the 'foo' and 'bar' apps
     NOSE_ARGS = [
         '--with-coverage',
-        '--cover-package=api.views,api.permissions,api.serializer,courses.views',
+        '--cover-package=courses.api.views,courses.api.permissions,courses.api.serializer,courses.views',
     ]
 
     MIDDLEWARE = [

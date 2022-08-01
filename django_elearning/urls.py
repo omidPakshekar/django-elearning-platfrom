@@ -10,7 +10,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('courses/', include('courses.urls')),
     path('students/', include('students.urls', namespace='students')),
-    path('api/v1/', include('api.urls')),
+    path('api/v1/', include('courses.api.urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]
 

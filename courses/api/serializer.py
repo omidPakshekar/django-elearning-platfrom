@@ -60,7 +60,7 @@ class CourseListSeriaLizer(serializers.ModelSerializer):
         source='modules.all', view_name='api:module-detail',
         lookup_field='pk', many=True, read_only=True)
     owner = UserSerializer()
-    modules_id = ModuleInlineSerializer(source='modules.all', many=True, write_only=True)    
+    modules_id = ModuleInlineSerializer(source='modules.all', many=True, write_only=True, required=False)    
 
     class Meta:
         model = Course
@@ -70,7 +70,7 @@ class CourseSeriaLizer(serializers.ModelSerializer):
     modules_url = serializers.HyperlinkedIdentityField(
         source='modules.all', view_name='api:module-detail',
         lookup_field='pk', many=True, read_only=True)
-    modules = ModuleInlineSerializer(source='modules.all', many=True)    
+    modules = ModuleInlineSerializer(source='modules.all', many=True,  write_only=True, required=False)    
     
     class Meta:
         model = Course
@@ -81,19 +81,21 @@ class CourseSeriaLizer(serializers.ModelSerializer):
             for updating course modules 
             we first find module that are changed then delete relation of it's foreign key
         """
-        modules = validated_data.pop('modules')['all']
-        module_list = []
-        for i in modules:
-            module_list.append(get_object_or_404(Module, id=i['id']))
-        # delete module that are changed 
-        for i in instance.modules.all():
-            if i not in module_list:
-                i.delete()
+        if 'modules' in validated_data:
+            modules = validated_data.pop('modules')['all']
+            module_list = []
+            for i in modules:
+                module_list.append(get_object_or_404(Module, id=i['id']))
+            # delete module that are changed 
+            for i in instance.modules.all():
+                if i not in module_list:
+                    i.delete()
         # find studend that are changed
-        students = validated_data.pop('students')
-        for i in instance.students.all():
-            if i not in students:
-                i.course_joined.remove(instance)
+        if 'students' in validated_data:
+            students = validated_data.pop('students')
+            for i in instance.students.all():
+                if i not in students:
+                    i.course_joined.remove(instance)
         # update attribute that are changed
         for attr, value in validated_data.items():
             if attr not in ['modules', 'modules_url', 'students']:
