@@ -207,55 +207,59 @@ class CourseApiTestCase(TestCase):
 
 
 
-# class ModuleApiTestCase(TestCase):
-#     def setUp(self):
-#         # craete admin user
-#         self.user = get_user_model().objects.create_user(
-#             username='test', email="test@gmail.com", password="password"
-#         )
-#         self.user.is_admin =True
-#         self.user.is_staff = True
-#         self.user.save()
-#         # create not admin user
-#         self.user2 = get_user_model().objects.create_user(
-#             username="test2", email="test2@gmail.com", password="password"
-#         )
-#         # create another non admin 
-#         self.user3 = get_user_model().objects.create_user(
-#             username="test3", email="test3@gmail.com", password="password"
-#         )
-#         # create category
-#         self.category = Category.objects.create(title="category1", slug="slugcategory")
-#         self.category2 = Category.objects.create(title="category2", slug="slugcategory2")
-#         # create course
-#         self.course = Course.objects.create(title = "title1", slug = "title1",
-#                     overview = "it's title", owner = self.user, category = self.category)
+class ModuleApiTestCase(TestCase):
+    def setUp(self):
+        # craete admin user
+        self.user = get_user_model().objects.create_user(
+            username='test', email="test@gmail.com", password="password"
+        )
+        self.user.is_admin =True
+        self.user.is_staff = True
+        self.user.save()
+        # create not admin user
+        self.user2 = get_user_model().objects.create_user(
+            username="test2", email="test2@gmail.com", password="password"
+        )
+        # create another non admin 
+        self.user3 = get_user_model().objects.create_user(
+            username="test3", email="test3@gmail.com", password="password"
+        )
+        # create category
+        self.category = Category.objects.create(title="category1", slug="slugcategory")
+        self.category2 = Category.objects.create(title="category2", slug="slugcategory2")
+        # create course
+        self.course = Course.objects.create(title = "title1", slug = "title1",
+                    overview = "it's title", owner = self.user, category = self.category)
 
-#         module_list = [
-#            Module.objects.create(
-#                 title = "module1",
-#                 description = "it's simple man",
-#                 order = 1,
-#                 course = self.course
-#            ),
-#            Module.objects.create(
-#                 title = "module2",
-#                 description = "it's simple",
-#                 order = 2,
-#                 course = self.course
-#            ),
-#         ]
-#         # set students for course1
-#         # course_list[0].students.set([2])
-#         # # create course lookup
-#         # self.course_lookup = {course.id: course for course in course_list}
-#         # override test client
-#         self.client = APIClient()
-#         auth_endpoint = "/api/v1/token/"
-#         data = { "email" : "test@gmail.com", "password" : "password"}
-#         auth_response = self.client.post(auth_endpoint, data)
-#         token = auth_response.json()['access']  
-#         # add credentials
-        # self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+        module_list = [
+           Module.objects.create(
+                title = "module1",
+                description = "it's simple man",
+                order = 1,
+                course = self.course
+           ),
+           Module.objects.create(
+                title = "module2",
+                description = "it's simple",
+                order = 2,
+                course = self.course
+           ),
+        ]
+        self.text = Text.objects.create(title='title one', content='thtis is text')
+        content_list = [
+            Content.objects.create(module=self.module_list[0], content_type='text', object_id=1)
+        ]
+        # set students for course1
+        # course_list[0].students.set([2])
+        # # create course lookup
+        # self.course_lookup = {course.id: course for course in course_list}
+        # override test client
+        self.client = APIClient()
+        auth_endpoint = "/api/v1/token/"
+        data = { "email" : "test@gmail.com", "password" : "password"}
+        auth_response = self.client.post(auth_endpoint, data)
+        token = auth_response.json()['access']  
+        # add credentials
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
 
         

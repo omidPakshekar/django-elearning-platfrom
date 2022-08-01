@@ -33,6 +33,8 @@ class CourseDetailView(DetailView):
 class OwnerMixin(object):
     def get_queryset(self):
         qs = super(OwnerMixin, self).get_queryset()
+        if self.request.user.is_admin:
+            return qs
         return qs.filter(owner = self.request.user)
 
 class OwnerEditMixin(object):
@@ -66,7 +68,10 @@ class CourseModuleListView(View):
     template_name = 'courses/manage/module_list.html'
     
     def dispatch(self, request, pk):
-        self.course = get_object_or_404(Course, id=pk, owner=request.user)
+        if request.user.is_admin:
+            self.course = get_object_or_404(Course, id=pk)
+        else:
+            self.course = get_object_or_404(Course, id=pk, owner=request.user)
         return super(CourseModuleListView, self).dispatch(request, pk)
     
     def get(self, request, *args, **kwargs):

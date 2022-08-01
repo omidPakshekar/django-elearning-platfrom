@@ -24,8 +24,8 @@
                     <p> {{module}} </p>
                 {% endfor %}
                 
-                {% if request.user.is_authenticated %}
-            {% if request.user == object.owner %}
+        {% if request.user.is_authenticated %}
+            {% if request.user == object.owner or request.user.is_staff %}
             
             
             <div style="display:inline-flex">
