@@ -19,9 +19,9 @@
           {% for object in object_list %}
             <div class="col-md-6">
                <a href="{% url 'courses:course-detail' pk=object.pk %}">
-                <div style="height:90%; width:100%;" class="image_main">
+                <div style="height:300px; width:500px;" class="image_main">
                         
-                        <img style="height:100%;" src="{{ object.photo.url }}">
+                        <img style="width:100%; height:300px;" src="{{ object.photo.url }}">
                         <div class="text_main">
                            <div class="seemore_text"> {{object.title}} </div>
                         </div>
