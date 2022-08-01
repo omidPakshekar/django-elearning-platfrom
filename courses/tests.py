@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from .models import *
 import requests
+from django.contrib.contenttypes.fields import ContentType
 
 class CourseApiTestCase(TestCase):
     def setUp(self):
@@ -231,6 +232,7 @@ class ModuleApiTestCase(TestCase):
         self.course = Course.objects.create(title = "title1", slug = "title1",
                     overview = "it's title", owner = self.user, category = self.category)
 
+
         module_list = [
            Module.objects.create(
                 title = "module1",
@@ -245,14 +247,16 @@ class ModuleApiTestCase(TestCase):
                 course = self.course
            ),
         ]
-        self.text = Text.objects.create(title='title one', content='thtis is text')
+
+        self.text = Text.objects.create(owner=self.user, title='title one', content='thtis is text')
         content_list = [
-            Content.objects.create(module=self.module_list[0], content_type='text', object_id=1)
+            Content.objects.create(module=module_list[0], content_type=ContentType.objects.get(model='text'), object_id=1)
         ]
+        
         # set students for course1
         # course_list[0].students.set([2])
         # # create course lookup
-        # self.course_lookup = {course.id: course for course in course_list}
+        self.module_lookup = {module.id: module for module in module_list}
         # override test client
         self.client = APIClient()
         auth_endpoint = "/api/v1/token/"
@@ -263,3 +267,38 @@ class ModuleApiTestCase(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
 
         
+    def test_module_list(self):
+        # get course id to find it's module
+        id = self.course.id
+        # get courses
+        resp = self.client.get(f'/api/v1/course/{id}/')
+        self.assertEqual(resp.status_code, 200)
+        results = resp.json()
+        # check size of module that we get
+        self.assertEqual(len(results['modules_url']), 2)
+        for url in results['modules_url']:
+            resp = self.client.get(url).json()
+            module = self.module_lookup[resp["id"]]
+            self.assertEqual(resp["id"], module.id)
+            self.assertEqual(resp["title"], module.title)
+            self.assertEqual(resp["description"], module.description)
+            self.assertEqual(resp["order"], module.order)
+
+
+    # def test_module_create(self):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -17,8 +17,5 @@ def render_content(context, item):
         return format_html("<p><a href={}>download {}</a></p>", item.file.url, item.title)
     elif item._meta.model_name == 'video':
         return render_to_string( 'courses/content/video.html', {'item' : item} )
-
-
-
     return format_html("<h1>hi i'm cotent</h1>")
     
