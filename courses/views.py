@@ -187,7 +187,7 @@ class ModuleContentCreateView(PermissionRequiredMixin, ContentMixin, CreateView)
         self.get_fields(model_)
         logger.debug(self.fields)
         self.module = get_object_or_404(Module, id = module_id, course__owner = request.user)
-        self.model = model_   
+        self.model = model_ 
         return super(ModuleContentCreateView, self).dispatch(request, module_id,  model_name, pk)
 
     def form_valid(self, form):

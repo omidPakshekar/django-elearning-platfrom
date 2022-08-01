@@ -93,8 +93,8 @@ class Text(ItemBase):
     content     = models.TextField(blank=True)
 
 class Image(ItemBase):
+    title       = models.CharField(max_length = 250, default='')
     image       = models.ImageField(upload_to= 'images')
-    # placeholder = models.CharField(max_length=40)
 
 class File(ItemBase):
     file     = models.FileField(upload_to = 'file')

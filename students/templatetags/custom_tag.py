@@ -12,9 +12,9 @@ def render_content(context, item):
     if item._meta.model_name == 'text':
         return format_html("<h3>{}</h3><p>{}</p>", item.title, item.content)
     elif item._meta.model_name == 'image':
-        return format_html("<img style='margin-bottom:5px;' src={} />", item.file.url)
+        return format_html("<img style='margin-bottom:5px;' src={} />", item.image.url)
     elif item._meta.model_name == 'file':
-        return format_html("<p>{}</p>", item.content)
+        return format_html("<p><a href={}>download {}</a></p>", item.file.url, item.title)
     elif item._meta.model_name == 'video':
         return render_to_string( 'courses/content/video.html', {'item' : item} )
 
