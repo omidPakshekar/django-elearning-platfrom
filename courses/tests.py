@@ -48,12 +48,29 @@ class CourseApiTestCase(TestCase):
                 owner = self.user2,
                 category = self.category2
            ),
-
         ]
         # set students for course1
         course_list[0].students.set([2])
         # create course lookup
         self.course_lookup = {course.id: course for course in course_list}
+
+        module_list = [
+           Module.objects.create(
+                title = "module1",
+                description = "it's simple man",
+                order = 1,
+                course = course_list[0]
+           ),
+           Module.objects.create(
+                title = "module2",
+                description = "it's simple",
+                order = 2,
+                course = course_list[0]
+           ),
+        ]
+        # create module lookup
+        self.module_lookup = {module.id: module for module in module_list}
+
         # override test client
         self.client = APIClient()
         auth_endpoint = "/api/v1/token/"
@@ -64,148 +81,164 @@ class CourseApiTestCase(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
 
         
-    # def test_course_create(self):
-    #     data = {
-    #         "title" : "create with aghaye omid",
-    #         "slug" : "agha",
-    #         "overview" : "it's simple man",
-    #         "owner" : 1,
-    #         "category" : 1,
-    #         "students" : [2],
-    #     }
-    #     # create course
-    #     resp = self.client.post('/api/v1/course/', data)
-    #     # 201 -> created
-    #     self.assertEqual(resp.status_code, 201)
-    #     course_id = resp.json()['id']
-    #     # get course to check that our data is correct or not
-    #     course = Course.objects.get(pk=course_id)
-    #     self.assertEqual(course.title, data['title'])
-    #     self.assertEqual(course.slug, data['slug'])
-    #     self.assertEqual(course.overview, data['overview'])
-    #     self.assertEqual(course.owner.id, data['owner'])
-    #     self.assertEqual(course.category.id, data['category'])
-    #     self.assertEqual(course.students.count(), 1)
+    def test_course_create(self):
+        data = {
+            "title" : "create with aghaye omid",
+            "slug" : "agha",
+            "overview" : "it's simple man",
+            "owner" : 1,
+            "category" : 1,
+            "students" : [2],
+        }
+        # create course
+        resp = self.client.post('/api/v1/course/', data)
+        # 201 -> created
+        self.assertEqual(resp.status_code, 201)
+        course_id = resp.json()['id']
+        # get course to check that our data is correct or not
+        course = Course.objects.get(pk=course_id)
+        self.assertEqual(course.title, data['title'])
+        self.assertEqual(course.slug, data['slug'])
+        self.assertEqual(course.overview, data['overview'])
+        self.assertEqual(course.owner.id, data['owner'])
+        self.assertEqual(course.category.id, data['category'])
+        self.assertEqual(course.students.count(), 1)
 
-    # def test_course_creation_unauthorized(self):
-    #     # logout
-    #     self.client.credentials()
-    #     data = {
-    #         "title" : "unathorized",
-    #         "slug" : "unathorized2",
-    #         "overview" : "it's simple man",
-    #         "owner" : 1,
-    #         "category" : 1,
-    #         "students" : [2],
-    #     }
-    #     # create course
-    #     resp = self.client.post('/api/v1/course/', data)
-    #     # 403 -> unathorized
-    #     self.assertEqual(resp.status_code, 403)
+    def test_course_creation_unauthorized(self):
+        # logout
+        self.client.credentials()
+        data = {
+            "title" : "unathorized",
+            "slug" : "unathorized2",
+            "overview" : "it's simple man",
+            "owner" : 1,
+            "category" : 1,
+            "students" : [2],
+        }
+        # create course
+        resp = self.client.post('/api/v1/course/', data)
+        # 403 -> unathorized
+        self.assertEqual(resp.status_code, 403)
         
 
-    # def test_course_list(self):
-    #     # get courses
-    #     resp = self.client.get('/api/v1/course/')
-    #     self.assertEqual(resp.status_code, 200)
-    #     results = resp.json()['results']
-    #     # check size of course that we get
-    #     self.assertEqual(len(results), 3)
-    #     for course_dict in results:
-    #         course = self.course_lookup[course_dict["id"]]
-    #         self.assertEqual(course.title, course_dict['title'])
-    #         self.assertEqual(course.slug, course_dict['slug'])
-    #         self.assertEqual(course.overview, course_dict['overview'])
-    #         self.assertEqual(course.owner.id, course_dict['owner'])
-    #         self.assertEqual(course.category.id, course_dict['category'])
+    def test_course_list(self):
+        # get courses
+        resp = self.client.get('/api/v1/course/')
+        self.assertEqual(resp.status_code, 200)
+        results = resp.json()['results']
+        # check size of course that we get
+        self.assertEqual(len(results), 3)
+        for course_dict in results:
+            course = self.course_lookup[course_dict["id"]]
+            self.assertEqual(course.title, course_dict['title'])
+            self.assertEqual(course.slug, course_dict['slug'])
+            self.assertEqual(course.overview, course_dict['overview'])
+            self.assertEqual(course.owner.id, course_dict['owner'])
+            self.assertEqual(course.category.id, course_dict['category'])
                     
-    # def test_course_update(self):
-    #     data = {
-    #             "title" : "hello world",
-    #             "slug" : "title1",
-    #             "overview" : "it's title",
-    #             "owner" : 1,
-    #             "category" : 2,
-    #             "students" : [2],
-    #     }
-    #     resp = self.client.put('/api/v1/course/1/', data)
-    #     self.assertEqual(resp.status_code, 200)
-    #     # logout admin user
-    #     self.client.credentials()
-    #     # login not admin user
-    #     auth_endpoint = "/api/v1/token/"
-    #     data = { "email" : "test2@gmail.com", "password" : "password"}
-    #     auth_response = self.client.post(auth_endpoint, data)
-    #     token = auth_response.json()['access']  
-    #     self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
-    #     data = {
-    #             "title" : "hello2",
-    #             "slug" : "title1",
-    #             "overview" : "it's title",
-    #             "owner" : 1,
-    #             "category" : 2,
-    #             "students" : [2],
-    #     }
-    #     resp = self.client.put('/api/v1/course/1/', data)
-    #     # only admin, staff and owner can update
-    #     self.assertEqual(resp.status_code, 403)
-    #     # logout admin user
-    #     self.client.credentials()
-    #     resp = self.client.put('/api/v1/course/1/', data)
-    #     self.assertEqual(resp.status_code, 403)
+    def test_course_update(self):
+        data = {
+                "title" : "hello world",
+                "slug" : "title1",
+                "overview" : "it's title",
+                "owner" : 1,
+                "category" : 2,
+                "students" : [2],
+        }
+        resp = self.client.put('/api/v1/course/1/', data)
+        self.assertEqual(resp.status_code, 200)
+        # logout admin user
+        self.client.credentials()
+        # login not admin user
+        auth_endpoint = "/api/v1/token/"
+        data = { "email" : "test2@gmail.com", "password" : "password"}
+        auth_response = self.client.post(auth_endpoint, data)
+        token = auth_response.json()['access']  
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+        data = {
+                "title" : "hello2",
+                "slug" : "title1",
+                "overview" : "it's title",
+                "owner" : 1,
+                "category" : 2,
+                "students" : [2],
+        }
+        resp = self.client.put('/api/v1/course/1/', data)
+        # only admin, staff and owner can update
+        self.assertEqual(resp.status_code, 403)
+        # logout admin user
+        self.client.credentials()
+        resp = self.client.put('/api/v1/course/1/', data)
+        self.assertEqual(resp.status_code, 403)
             
-    # def test_course_partial_update(self):
-    #     data = {
-    #             "title" : "hello partial",
-    #         }
-    #     resp = self.client.patch('/api/v1/course/1/', data)
-    #     self.assertEqual(resp.status_code, 200)
+    def test_course_partial_update(self):
+        data = {
+                "title" : "hello partial",
+            }
+        resp = self.client.patch('/api/v1/course/1/', data)
+        self.assertEqual(resp.status_code, 200)
 
-    # def test_course_owner_list(self):
-    #     # get course that we are owner of that course
-    #     resp = self.client.get('/api/v1/course/mine/')
-    #     self.assertEqual(resp.status_code, 200)
-    #     results = resp.json()
-    #     self.assertEqual(len(results), 2)
-    #     for course_dict in results:
-    #         course = self.course_lookup[course_dict["id"]]
-    #         self.assertEqual(course.title, course_dict['title'])
-    #         self.assertEqual(course.slug, course_dict['slug'])
-    #         self.assertEqual(course.overview, course_dict['overview'])
-    #         self.assertEqual(course.owner.email, course_dict['owner']['email'])
-    #         self.assertEqual(course.category.id, course_dict['category'])
+    def test_course_owner_list(self):
+        # get course that we are owner of that course
+        resp = self.client.get('/api/v1/course/mine/')
+        self.assertEqual(resp.status_code, 200)
+        results = resp.json()
+        self.assertEqual(len(results), 2)
+        for course_dict in results:
+            course = self.course_lookup[course_dict["id"]]
+            self.assertEqual(course.title, course_dict['title'])
+            self.assertEqual(course.slug, course_dict['slug'])
+            self.assertEqual(course.overview, course_dict['overview'])
+            self.assertEqual(course.owner.email, course_dict['owner']['email'])
+            self.assertEqual(course.category.id, course_dict['category'])
 
-    # def test_course_students(self):
-    #     # get course that we are joined
-    #     # logout admin user
-    #     self.client.credentials()
-    #     # login not admin user
-    #     auth_endpoint = "/api/v1/token/"
-    #     data = { "email" : "test2@gmail.com", "password" : "password"}
-    #     auth_response = self.client.post(auth_endpoint, data)
-    #     token = auth_response.json()['access']  
-    #     self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
-    #     resp = self.client.get('/api/v1/course/students/')
-    #     results = resp.json()
-    #     self.assertEqual(len(results), 1)
-    #     course = Course.objects.get(id=1)
-    #     self.assertEqual(course.id, results[0]['id'] )
-    #     self.assertEqual(course.title, results[0]['title'] )
-    #     self.assertEqual(course.overview, results[0]['overview'] )
-    #     self.assertEqual(course.owner.email, results[0]['owner']['email'])
+    def test_course_students(self):
+        # get course that we are joined
+        # logout admin user
+        self.client.credentials()
+        # login not admin user
+        auth_endpoint = "/api/v1/token/"
+        data = { "email" : "test2@gmail.com", "password" : "password"}
+        auth_response = self.client.post(auth_endpoint, data)
+        token = auth_response.json()['access']  
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+        resp = self.client.get('/api/v1/course/students/')
+        results = resp.json()
+        self.assertEqual(len(results), 1)
+        course = Course.objects.get(id=1)
+        self.assertEqual(course.id, results[0]['id'] )
+        self.assertEqual(course.title, results[0]['title'] )
+        self.assertEqual(course.overview, results[0]['overview'] )
+        self.assertEqual(course.owner.email, results[0]['owner']['email'])
     
-    # def test_course_delete(self):
-    #     # not found 
-    #     resp = self.client.delete('/api/v1/course/1000038945/')
-    #     self.assertEqual(resp.status_code, 404)
-    #     # delete object
-    #     resp = self.client.delete('/api/v1/course/1/')
-    #     self.assertEqual(resp.status_code, 204)
-    #     # logout admin user
-    #     self.client.credentials()
-    #     resp = self.client.delete('/api/v1/course/2/')
-    #     self.assertEqual(resp.status_code, 403)
+    def test_course_delete(self):
+        # not found 
+        resp = self.client.delete('/api/v1/course/1000038945/')
+        self.assertEqual(resp.status_code, 404)
+        # delete object
+        resp = self.client.delete('/api/v1/course/1/')
+        self.assertEqual(resp.status_code, 204)
+        # logout admin user
+        self.client.credentials()
+        resp = self.client.delete('/api/v1/course/2/')
+        self.assertEqual(resp.status_code, 403)
 
+    def test_course_module_list(self):
+        # get course id to find it's module
+        id = 1
+        # get courses
+        resp = self.client.get(f'/api/v1/course/{id}/')
+        self.assertEqual(resp.status_code, 200)
+        results = resp.json()
+        # check size of module that we get
+        self.assertEqual(len(results['modules_url']), 2)
+        for url in results['modules_url']:
+            resp = self.client.get(url).json()
+            module = self.module_lookup[resp["id"]]
+            self.assertEqual(resp["id"], module.id)
+            self.assertEqual(resp["title"], module.title)
+            self.assertEqual(resp["description"], module.description)
+            self.assertEqual(resp["order"], module.order)
 
 
 class ModuleApiTestCase(TestCase):
@@ -248,11 +281,17 @@ class ModuleApiTestCase(TestCase):
            ),
         ]
 
-        self.text = Text.objects.create(owner=self.user, title='title one', content='thtis is text')
+        self.text = Text.objects.create(owner=self.user, title='title one', content='this is text1')
+        text2 = Text.objects.create(owner=self.user, title='title two', content='this is text2')
+        text3 = Text.objects.create(owner=self.user, title='title three', content='this is text3')
+
         self.content_list = [
-            Content.objects.create(module=module_list[0], content_type=ContentType.objects.get(model='text'), object_id=1)
+            Content.objects.create(module=module_list[0], content_type=ContentType.objects.get(model='text'), object_id=1),
+            Content.objects.create(module=module_list[0], content_type=ContentType.objects.get(model='text'), object_id=2),
+            Content.objects.create(module=module_list[0], content_type=ContentType.objects.get(model='text'), object_id=3),
         ]
-        
+        self.content_lookup = {content.id: content for content in self.content_list}
+
         # set students for course1
         # course_list[0].students.set([2])
         # # create course lookup
@@ -266,6 +305,7 @@ class ModuleApiTestCase(TestCase):
         # add credentials
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
 
+    
         
     def test_module_list(self):
         # get course id to find it's module
@@ -346,12 +386,27 @@ class ModuleApiTestCase(TestCase):
         resp = self.client.put('/api/v1/course/1/', data)
         self.assertEqual(resp.status_code, 403)
             
-    def test_course_partial_update(self):
+    def test_module_partial_update(self):
         data = {
                 "title" : "hello partial",
             }
         resp = self.client.patch('/api/v1/course/1/', data)
         self.assertEqual(resp.status_code, 200)
+
+#     def test_content_list(self):
+#         # get contents
+#         resp = self.client.get(f'/api/v1/content/')
+#         self.assertEqual(resp.status_code, 200)
+#         results = resp.json()['results']
+#         self.assertEqual(len(results), 3)
+#         for content_dict in results:
+#             content = self.content_lookup[content_dict["id"]]
+#             self.assertEqual(content.id, content_dict['id'])
+#             # self.assertEqual(content.content_type, content_dict['content_type'])
+#             # self.assertEqual(course.overview, course_dict['overview'])
+#             # self.assertEqual(course.owner.email, course_dict['owner']['email'])
+#             # self.assertEqual(course.category.id, course_dict['category'])
+        
 
 
 
