@@ -28,7 +28,7 @@ class ModuleListSerializer(serializers.ModelSerializer):
     contents_url = serializers.HyperlinkedIdentityField(
         read_only=True, source='contents.all', view_name='api:content-detail',
         lookup_field='pk', many=True)    
-    contents = ContentInlineSerializer(many=True)
+    contents = ContentInlineSerializer(many=True, write_only=True, required=False)
     class Meta:
         model = Module
         fields = "__all__"
@@ -39,14 +39,18 @@ class ModuleListSerializer(serializers.ModelSerializer):
             we first change content module foreign key to module 5
             then update it
         """
-        contents = validated_data.pop('contents')
-        content_list = []
-        for i in contents:
-            content_list.append(get_object_or_404(Content, id=i['id']))
-        # change module content to null
-        for i in instance.contents.all():
-            if i not in content_list:
-                i.delete()
+        print('hiiiiiiiiiiiiiiiiii')
+        if "contents" in validated_data:
+            contents = validated_data.pop('contents')
+            print('**'*4, contents)
+            content_list = []
+            for i in contents:
+                content_list.append(get_object_or_404(Content, id=i['id']))
+            # change module content to null
+            for i in instance.contents.all():
+                if i not in content_list:
+                    i.delete()
+            instance.contents.set(content_list)
         # change attr
         for attr, value in validated_data.items():
             if attr not in ['contents, contents_url']:

@@ -249,7 +249,7 @@ class ModuleApiTestCase(TestCase):
         ]
 
         self.text = Text.objects.create(owner=self.user, title='title one', content='thtis is text')
-        content_list = [
+        self.content_list = [
             Content.objects.create(module=module_list[0], content_type=ContentType.objects.get(model='text'), object_id=1)
         ]
         
@@ -284,13 +284,44 @@ class ModuleApiTestCase(TestCase):
             self.assertEqual(resp["description"], module.description)
             self.assertEqual(resp["order"], module.order)
 
+ 
+    def test_module_create_authorized(self):
+        data = {
+            "title" : "module3",
+            "description" : "it's simple",
+            "course" : self.course.id
+        }
+        # create new module
+        resp = self.client.post('/api/v1/module/', data)
+        # 201 --> request was successful and as a result, a resource has been created 
+        self.assertEqual(resp.status_code, 201)
+        module_id = resp.json()['id']
+        # get course to check that our data is correct or not
+        module = Module.objects.get(pk=module_id)
+        self.assertEqual(module.title, data['title'])
+        self.assertEqual(module.description, data['description'])
+        self.assertEqual(module.course.id, data['course'])
 
-    # def test_module_create(self):
 
-
-
-
-
+    # def test_module_create_unauthorized(self):
+    #     # logout
+    #     self.client.cr
+    #     data = {
+    #         "title" : "module3",
+    #         "description" : "it's simple",
+    #         "course" : self.course.id
+    #     }
+    #     print('data', data)
+    #     # create new module
+    #     resp = self.client.post('/api/v1/module/', data)
+    #     # 201 --> request was successful and as a result, a resource has been created 
+    #     self.assertEqual(resp.status_code, 201)
+    #     module_id = resp.json()['id']
+    #     # get course to check that our data is correct or not
+    #     module = Module.objects.get(pk=module_id)
+    #     self.assertEqual(module.title, data['title'])
+    #     self.assertEqual(module.description, data['description'])
+    #     self.assertEqual(module.course, data['course'])
 
 
 
