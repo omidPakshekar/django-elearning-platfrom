@@ -39,7 +39,6 @@ class ModuleListSerializer(serializers.ModelSerializer):
             we first change content module foreign key to module 5
             then update it
         """
-        print('hiiiiiiiiiiiiiiiiii')
         if "contents" in validated_data:
             contents = validated_data.pop('contents')
             print('**'*4, contents)
