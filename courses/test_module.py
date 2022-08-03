@@ -186,17 +186,19 @@ class ModuleApiTestCase(TestCase):
         resp = self.client.patch('/api/v1/course/1/', data)
         self.assertEqual(resp.status_code, 200)
 
-    # def test_content_list(self):
-    #     # get contents
-    #     resp = self.client.get(f'/api/v1/content/')
-    #     self.assertEqual(resp.status_code, 200)
-    #     results = resp.json()['results']
-    #     self.assertEqual(len(results), 3)
-    #     for content_dict in results:
-    #         content = self.content_lookup[content_dict["id"]]
-    #         self.assertEqual(content.id, content_dict['id'])
-    #         # self.assertEqual(content.content_type, content_dict['content_type'])
-    #         # self.assertEqual(course.overview, course_dict['overview'])
-    #         # self.assertEqual(course.owner.email, course_dict['owner']['email'])
-    #         # self.assertEqual(course.category.id, course_dict['category'])
-        
+    def test_content_list(self):
+        # get modules
+        id = 1
+        resp = self.client.get(f'/api/v1/module/{id}/')
+        self.assertEqual(resp.status_code, 200)
+        results = resp.json()['contents_url']
+        self.assertEqual(len(results), 3)
+        for url in results:
+            resp = self.client.get(url).json()
+            content = Content.objects.get(id=resp['id'])
+            self.assertEqual(resp['id'], content.id)
+            self.assertEqual(resp['module'], content.module.id)
+            self.assertEqual(resp['object_id'], content.object_id)
+            self.assertEqual(resp['order'], content.order)
+
+    

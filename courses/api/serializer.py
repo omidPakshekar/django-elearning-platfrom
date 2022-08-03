@@ -108,6 +108,11 @@ class CourseSeriaLizer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class ItemSerializer(object):
+    created_time = serializers.DateTimeField(read_only=True)
+    updated_time = serializers.DateTimeField(read_only=True)
+    id = serializers.DateTimeField(read_only=True)
+
 class ImageSeriaLizer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
     class Meta:
@@ -125,18 +130,29 @@ class VideoSeriaLizer(serializers.ModelSerializer):
 
 
 class TextSeriaLizer(serializers.ModelSerializer):
+    
     class Meta:
         model = Text
         fields = "__all__"
+    
+    def update(self, instance, validated_data):
+        print('validated_data2=', validated_data)
+        return super().update(instance, validated_data)
 
 class FileSeriaLizer(serializers.ModelSerializer):
+    file_url = serializers.SerializerMethodField()
     class Meta:
         model = File
         fields = "__all__"
 
+    def get_file_url(self, instance):
+        # get request from contentListSeriaLizerClass then create uri 
+        request = self.context['contentContext'].get('request')
+        return request.build_absolute_uri(instance.file.url)
 
-class ContentListSerializer(serializers.ModelSerializer):
-    content_type = serializers.SerializerMethodField(read_only=True)
+
+class ContentSerializer(serializers.ModelSerializer):
+    content_type = serializers.SerializerMethodField()
     # content = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Content
@@ -151,6 +167,10 @@ class ContentListSerializer(serializers.ModelSerializer):
         if model_name == 'video':
             return (VideoSeriaLizer(obj.item).data)
         if model_name == 'file':
-            return (FileSeriaLizer(obj.item).data)
+            return (FileSeriaLizer(obj.item, context={'contentContext' : self.context}).data)
         
         return obj.item._meta.model_name
+    
+    def update(self, instance, validated_data):
+        print('validated_data=', validated_data)
+        return super().update(instance, validated_data)
