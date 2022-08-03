@@ -13,9 +13,11 @@ class ContentInlineSerializer(serializers.ModelSerializer):
         model = Content
         fields = ('id', )
 
-class ModuleInlineSerializer(serializers.Serializer):
+class ModuleInlineSerializer(serializers.Serializer ):
     id = serializers.IntegerField()
-    
+    # class Meta:
+    #     model = Module
+    #     fields = ('id', )
         
 
 class UserSerializer(serializers.ModelSerializer):
@@ -57,23 +59,23 @@ class ModuleListSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-class CourseListSeriaLizer(serializers.ModelSerializer):
-    students = StudentInlineSerializer(many=True)
-    modules_url = serializers.HyperlinkedIdentityField(
-        source='modules.all', view_name='api:module-detail',
-        lookup_field='pk', many=True, read_only=True)
-    owner = UserSerializer()
-    modules_id = ModuleInlineSerializer(source='modules.all', many=True, write_only=True, required=False)    
+# class CourseListSeriaLizer(serializers.ModelSerializer):
+#     students = StudentInlineSerializer(many=True)
+#     modules_url = serializers.HyperlinkedIdentityField(
+#         source='modules.all', view_name='api:module-detail',
+#         lookup_field='pk', many=True, read_only=True)
+#     owner = UserSerializer()
+#     modules_id = ModuleInlineSerializer( many=True, write_only=True, required=False)    
 
-    class Meta:
-        model = Course
-        fields = "__all__"
+#     class Meta:
+#         model = Course
+#         fields = "__all__"
 
 class CourseSeriaLizer(serializers.ModelSerializer):
     modules_url = serializers.HyperlinkedIdentityField(
         source='modules.all', view_name='api:module-detail',
         lookup_field='pk', many=True, read_only=True)
-    modules = ModuleInlineSerializer(source='modules.all', many=True,  write_only=True, required=False)    
+    modules = ModuleInlineSerializer(source="modules.all", many=True,   required=False)    
     
     class Meta:
         model = Course

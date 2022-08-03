@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from .models import *
 import requests
 from django.contrib.contenttypes.fields import ContentType
+import json
 
 class CourseApiTestCase(TestCase):
     def setUp(self):
@@ -54,7 +55,7 @@ class CourseApiTestCase(TestCase):
         # create course lookup
         self.course_lookup = {course.id: course for course in course_list}
 
-        module_list = [
+        self.module_list = [
            Module.objects.create(
                 title = "module1",
                 description = "it's simple man",
@@ -69,7 +70,7 @@ class CourseApiTestCase(TestCase):
            ),
         ]
         # create module lookup
-        self.module_lookup = {module.id: module for module in module_list}
+        self.module_lookup = {module.id: module for module in self.module_list}
 
         # override test client
         self.client = APIClient()
@@ -147,6 +148,22 @@ class CourseApiTestCase(TestCase):
         }
         resp = self.client.put('/api/v1/course/1/', data)
         self.assertEqual(resp.status_code, 200)
+        # change module
+        payload = json.dumps({
+            "id": 1,
+            "modules": [
+                {
+                "id": 2
+                }
+            ],
+            "title": "it's postmanq3",
+            "slug": "posta2",
+            "overview": "it's overview3\nq",
+            "owner": 1,
+            "category": 1
+        })
+        resp = self.client.put('/api/v1/course/1/', data=payload, content_type='application/json')
+        self.assertEqual(len(resp.json()['modules']), 1)
         # logout admin user
         self.client.credentials()
         # login not admin user
@@ -393,19 +410,19 @@ class ModuleApiTestCase(TestCase):
         resp = self.client.patch('/api/v1/course/1/', data)
         self.assertEqual(resp.status_code, 200)
 
-#     def test_content_list(self):
-#         # get contents
-#         resp = self.client.get(f'/api/v1/content/')
-#         self.assertEqual(resp.status_code, 200)
-#         results = resp.json()['results']
-#         self.assertEqual(len(results), 3)
-#         for content_dict in results:
-#             content = self.content_lookup[content_dict["id"]]
-#             self.assertEqual(content.id, content_dict['id'])
-#             # self.assertEqual(content.content_type, content_dict['content_type'])
-#             # self.assertEqual(course.overview, course_dict['overview'])
-#             # self.assertEqual(course.owner.email, course_dict['owner']['email'])
-#             # self.assertEqual(course.category.id, course_dict['category'])
+    def test_content_list(self):
+        # get contents
+        resp = self.client.get(f'/api/v1/content/')
+        self.assertEqual(resp.status_code, 200)
+        results = resp.json()['results']
+        self.assertEqual(len(results), 3)
+        for content_dict in results:
+            content = self.content_lookup[content_dict["id"]]
+            self.assertEqual(content.id, content_dict['id'])
+            # self.assertEqual(content.content_type, content_dict['content_type'])
+            # self.assertEqual(course.overview, course_dict['overview'])
+            # self.assertEqual(course.owner.email, course_dict['owner']['email'])
+            # self.assertEqual(course.category.id, course_dict['category'])
         
 
 

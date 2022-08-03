@@ -1,3 +1,4 @@
+from turtle import update
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -9,7 +10,7 @@ from rest_framework import generics, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import permissions
 
-from .serializer import CourseListSeriaLizer, CourseSeriaLizer, ModuleListSerializer, ContentListSerializer
+from .serializer import CourseSeriaLizer, ModuleListSerializer, ContentListSerializer
 from courses.models import *
 from .permissions import ContentPermission, UserPermission, ModulePermission
 
@@ -32,6 +33,11 @@ class CourseViewSet(viewsets.ModelViewSet):
     def list(self, *args, **kwargs):
         return super(CourseViewSet, self).list(*args, **kwargs)
 
+    def put(self, *args, **kwargs):
+        print('hi')
+        return super(CourseViewSet, self).put(*args, **kwargs)
+        
+
     @action(methods=["get"], detail=False, name="Posts by the logged in user")
     def mine(self, request):
         if request.user.is_anonymous:
@@ -39,8 +45,8 @@ class CourseViewSet(viewsets.ModelViewSet):
         courses = self.get_queryset().filter(owner=request.user)
         page = self.paginate_queryset(courses)
         if page is not None:
-            serializer = CourseListSeriaLizer(page, many=True, context={"request": request})
-        serializer = CourseListSeriaLizer(courses, many=True, context={"request": request})
+            serializer = CourseSeriaLizer(page, many=True, context={"request": request})
+        serializer = CourseSeriaLizer(courses, many=True, context={"request": request})
         return Response(serializer.data)
 
     @action(methods=["get"], detail=False, name="you join in this course")
@@ -50,8 +56,8 @@ class CourseViewSet(viewsets.ModelViewSet):
         courses = self.get_queryset().filter(students=request.user)
         page = self.paginate_queryset(courses)
         if page is not None:
-            serializer = CourseListSeriaLizer(page, many=True, context={"request": request})
-        serializer = CourseListSeriaLizer(courses, many=True, context={"request": request})
+            serializer = CourseSeriaLizer(page, many=True, context={"request": request})
+        serializer = CourseSeriaLizer(courses, many=True, context={"request": request})
         return Response(serializer.data)
 
 
