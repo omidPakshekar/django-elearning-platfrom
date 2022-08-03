@@ -206,7 +206,7 @@ class CourseApiTestCase(TestCase):
             self.assertEqual(course.title, course_dict['title'])
             self.assertEqual(course.slug, course_dict['slug'])
             self.assertEqual(course.overview, course_dict['overview'])
-            self.assertEqual(course.owner.email, course_dict['owner']['email'])
+            self.assertEqual(course.owner.id, course_dict['owner'])
             self.assertEqual(course.category.id, course_dict['category'])
 
     def test_course_students(self):
@@ -226,7 +226,7 @@ class CourseApiTestCase(TestCase):
         self.assertEqual(course.id, results[0]['id'] )
         self.assertEqual(course.title, results[0]['title'] )
         self.assertEqual(course.overview, results[0]['overview'] )
-        self.assertEqual(course.owner.email, results[0]['owner']['email'])
+        self.assertEqual(course.owner.id, results[0]['owner'])
     
     def test_course_delete(self):
         # not found 
