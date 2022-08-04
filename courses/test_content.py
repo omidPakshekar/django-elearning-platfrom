@@ -117,7 +117,37 @@ class ContentApiTestCase(TestCase):
         self.assertEqual(content.module.id, data['module'])
         self.assertEqual(content.content_type.id, data['content_type'])
         self.assertEqual(content.object_id, data['object_id'])
-
+ 
+    def test_content_create_unauthorized(self):
+        # logout
+        self.client.credentials()
+        # create text object
+        text_list = [
+            Text.objects.create(owner=self.user, title='title four', content='this is text4'),
+            Text.objects.create(owner=self.user, title='title five', content='this is text5')
+        ]
+        data = {
+            "description" : "it's 1",
+            "title" : "it's simple",
+            "course" : self.course.id,
+            "object_id" : text_list[1].id,
+            "module": 1,
+            "content_type": ContentType.objects.get(model='text').id
+        }
+        # create new module
+        resp = self.client.post('/api/v1/content/', data)
+        #  403 --> user dosnt create
+        self.assertEqual(resp.status_code,  403)
+        # login not admin user
+        auth_endpoint = "/api/v1/token/"
+        data = { "email" : "test2@gmail.com", "password" : "password"}
+        auth_response = self.client.post(auth_endpoint, data)
+        token = auth_response.json()['access']  
+        # add credentials
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+        resp = self.client.put('/api/v1/module/1/', data)
+        # 403 --> indicates that the server understands the request but refuses to authorize it
+        self.assertEqual(resp.status_code, 403)
 
 
     # def test_module_create_unauthorized(self):
