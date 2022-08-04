@@ -3,6 +3,9 @@ from rest_framework import serializers
 from courses.models import *
 from students.models import CustomeUserModel
 from django.shortcuts import get_object_or_404
+from rest_framework.fields import Field
+
+
 
 class StudentInlineSerializer(serializers.Serializer):
     username = serializers.CharField(read_only=True)
@@ -108,10 +111,7 @@ class CourseSeriaLizer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-class ItemSerializer(object):
-    created_time = serializers.DateTimeField(read_only=True)
-    updated_time = serializers.DateTimeField(read_only=True)
-    id = serializers.DateTimeField(read_only=True)
+
 
 class ImageSeriaLizer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
@@ -121,7 +121,9 @@ class ImageSeriaLizer(serializers.ModelSerializer):
     def get_image_url(self, instance):
         # get request from contentListSeriaLizerClass then create uri 
         request = self.context['contentContext'].get('request')
+        # if not instance.image == '':
         return request.build_absolute_uri(instance.image.url)
+        # return 'http://localhost:8000/media/courses/default_image.jpg'
 
 class VideoSeriaLizer(serializers.ModelSerializer):
     class Meta:
@@ -151,8 +153,58 @@ class FileSeriaLizer(serializers.ModelSerializer):
         return request.build_absolute_uri(instance.file.url)
 
 
+class RecurringMeetingRelatedField(Field):
+    def to_representation(self, value):
+        if isinstance(value, Text):
+            serializer = TextSeriaLizer(instance=value)
+        elif isinstance(value, Image):
+            serializer = ImageSeriaLizer(value, context={'contentContext' : self.context})
+        elif isinstance(value, Video):
+            serializer = VideoSeriaLizer(value)
+        elif isinstance(value, File):
+            serializer = FileSeriaLizer(value, context={'contentContext' : self.context})
+        
+        else:
+            raise Exception('Unexpected type of tagged object')
+        return serializer.data
+
+    def to_internal_value(self, data):
+    #     # you need to pass some identity to figure out which serializer to use
+    #     # supose you'll add 'meeting_type' key to your json
+    #     meeting_type = data.pop('meeting_type')
+        # print('data=', data)
+        print('data=',data)
+        obj = None
+        if 'content' in  data:
+            obj = Text.objects.get(id=data["id"])
+            obj.title = data['title']
+            obj.content = data['content']
+            obj.save()
+        elif 'image' in data:
+            obj = Image.objects.get(id=data["id"])
+            obj.title = data['title']
+            obj.image = data['image']
+            if data['image'] == '':
+                obj.image = 'media/courses/default_image.jpg'
+
+                
+        elif 'file' in data:
+            serializer = FileSeriaLizer(data=data)
+        elif 'url' in data:
+            serializer = VideoSeriaLizer(data=data)
+        else:
+            raise serializers.ValidationError('no meeting_type provided')
+        
+        # if serializer.is_valid():
+        #     obj = serializer.save()
+
+        # else:
+        #     raise serializers.ValidationError(serializer.errors)
+        return obj
+
 class ContentSerializer(serializers.ModelSerializer):
     content_type = serializers.SerializerMethodField()
+    item = RecurringMeetingRelatedField()
     # content = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Content
