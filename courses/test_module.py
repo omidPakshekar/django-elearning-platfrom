@@ -225,4 +225,3 @@ class ModuleApiTestCase(TestCase):
         resp = self.client.patch(f'/api/v1/module/{id}/', data=data, content_type='application/json')
         self.assertEqual(resp.json()['contents_url'],  ['http://testserver/api/v1/content/1/' , 'http://testserver/api/v1/content/3/'])
 
-        

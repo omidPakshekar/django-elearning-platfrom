@@ -197,7 +197,7 @@ class ContentSerializer(Field):
         return obj
 
 class ContentSerializer(serializers.ModelSerializer):
-    item = ContentSerializer()
+    item = ContentSerializer(required=False)
     class Meta:
         model = Content
         fields = "__all__"
