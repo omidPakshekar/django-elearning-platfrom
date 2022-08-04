@@ -186,7 +186,7 @@ class ModuleApiTestCase(TestCase):
         resp = self.client.patch('/api/v1/course/1/', data)
         self.assertEqual(resp.status_code, 200)
 
-    def test_course_delete(self):
+    def test_content_delete(self):
         # not found 
         resp = self.client.delete('/api/v1/module/1000038945/')
         self.assertEqual(resp.status_code, 404)

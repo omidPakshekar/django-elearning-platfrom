@@ -150,6 +150,106 @@ class ContentApiTestCase(TestCase):
         self.assertEqual(resp.status_code, 403)
 
 
+            
+    # def test_module_update(self):
+    #     data = {
+    #             "course" : self.course.id,
+    #             "title" : "change title",
+    #             "description" : "it's description"
+    #     }
+    #     resp = self.client.put('/api/v1/module/1/', data)
+    #     self.assertEqual(resp.status_code, 200)
+    #     resp = resp.json()
+    #     # check data result
+    #     module = Module.objects.get(id=1)
+    #     self.assertEqual(resp["id"], module.id)
+    #     self.assertEqual(resp["course"], module.course.id )
+    #     self.assertEqual(resp["title"], module.title)
+    #     self.assertEqual(resp["description"], module.description)
+    #     # check change content
+    #     payload = json.dumps({
+    #         "contents": [
+    #             {
+    #                 "id": 1
+    #             },
+    #             {
+    #                 "id": 3
+    #             }
+    #         ],
+    #         "title": "it's postmanq3",
+    #         "course" : self.course.id,
+    #         "description": "it's over",
+    #     })
+    #     resp = self.client.put('/api/v1/module/1/', data=payload, content_type='application/json')
+    #     resp = resp.json()
+    #     # check length of contents
+    #     self.assertEqual(len(resp["contents_url"]), 2)
+    #     # check data result
+    #     module = Module.objects.get(id=1)
+    #     self.assertEqual(resp["id"], module.id)
+    #     self.assertEqual(resp["course"], module.course.id )
+    #     self.assertEqual(resp["title"], module.title)
+    #     self.assertEqual(resp["description"], module.description)
+
+    #     # logout admin user
+    #     self.client.credentials()
+    #     # login not admin user
+    #     auth_endpoint = "/api/v1/token/"
+    #     data = { "email" : "test2@gmail.com", "password" : "password"}
+    #     auth_response = self.client.post(auth_endpoint, data)
+    #     token = auth_response.json()['access']  
+    #     self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+    #     data = {
+    #         "course" : self.course.id,
+    #         "title" : "change title2",
+    #         "description" : "it's description2"
+    #      }
+    #     resp = self.client.put('/api/v1/module/1/', data)
+    #     # 403 --> indicates that the server understands the request but refuses to authorize it
+    #     self.assertEqual(resp.status_code, 403)
+    #     # logout not admin user
+    #     self.client.credentials()
+    #     resp = self.client.put('/api/v1/course/1/', data)
+    #     self.assertEqual(resp.status_code, 403)
+            
+    def test_module_partial_update(self):
+        data = {
+                "title" : "hello partial",
+            }
+        resp = self.client.patch('/api/v1/content/1/', data)
+        self.assertEqual(resp.status_code, 200)
+        # logout 
+        self.client.credentials()
+        data = {
+                "title" : "hello2"
+        }
+        resp = self.client.patch('/api/v1/content/1/', data)
+        self.assertEqual(resp.status_code, 403)
+        # login not admin user
+        auth_endpoint = "/api/v1/token/"
+        data = { "email" : "test2@gmail.com", "password" : "password"}
+        auth_response = self.client.post(auth_endpoint, data)
+        token = auth_response.json()['access']  
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+        data = {
+                "title" : "hello3"
+        }
+        resp = self.client.patch('/api/v1/content/1/', data)
+        self.assertEqual(resp.status_code, 403)
+        
+
+    def test_content_delete(self):
+        # not found 
+        resp = self.client.delete('/api/v1/content/1000038945/')
+        self.assertEqual(resp.status_code, 404)
+        # delete object
+        resp = self.client.delete('/api/v1/content/1/')
+        self.assertEqual(resp.status_code, 204)
+        # logout admin user
+        self.client.credentials()
+        resp = self.client.delete('/api/v1/content/2/')
+        self.assertEqual(resp.status_code, 403)    
+
     # def test_module_create_unauthorized(self):
     #     # logout
     #     self.client.credentials()
