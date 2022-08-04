@@ -44,9 +44,9 @@ class ModuleListSerializer(serializers.ModelSerializer):
             we first change content module foreign key to module 5
             then update it
         """
+
         if "contents" in validated_data:
             contents = validated_data.pop('contents')
-            print('**'*4, contents)
             content_list = []
             for i in contents:
                 content_list.append(get_object_or_404(Content, id=i['id']))
@@ -154,6 +154,7 @@ class FileSeriaLizer(serializers.ModelSerializer):
 
 
 class ContentSerializer(Field):
+    # show serializer for specific data
     def to_representation(self, value):
         if isinstance(value, Text):
             serializer = TextSeriaLizer(instance=value)
