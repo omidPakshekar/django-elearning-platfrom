@@ -5,8 +5,8 @@ import json
 
 auth_endpoint = "http://127.0.0.1:8000/api/v1/token/"
 
-password = "est14641"
-email = "omid.pakshekar.est@gmail.com"
+password = ""
+email = ""
 data ={
     "email" : email,
     "password" : password

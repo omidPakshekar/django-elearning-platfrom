@@ -163,7 +163,6 @@ class ContentSerializer(Field):
             serializer = VideoSeriaLizer(value)
         elif isinstance(value, File):
             serializer = FileSeriaLizer(value, context={'contentContext' : self.context})
-        
         else:
             raise Exception('Unexpected type of tagged object')
         return serializer.data
@@ -202,6 +201,9 @@ class ContentSerializer(serializers.ModelSerializer):
         model = Content
         fields = "__all__"
     
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
     # def get_content_type(self, obj):
     #     model_name = obj.item._meta.model_name 
     #     if model_name == 'text':
@@ -214,5 +216,3 @@ class ContentSerializer(serializers.ModelSerializer):
     #         return (FileSeriaLizer(obj.item, context={'contentContext' : self.context}).data)
     #     return obj.item._meta.model_name
     
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
