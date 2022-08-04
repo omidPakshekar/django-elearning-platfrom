@@ -121,9 +121,7 @@ class ImageSeriaLizer(serializers.ModelSerializer):
     def get_image_url(self, instance):
         # get request from contentListSeriaLizerClass then create uri 
         request = self.context['contentContext'].get('request')
-        # if not instance.image == '':
         return request.build_absolute_uri(instance.image.url)
-        # return 'http://localhost:8000/media/courses/default_image.jpg'
 
 class VideoSeriaLizer(serializers.ModelSerializer):
     class Meta:
@@ -150,10 +148,12 @@ class FileSeriaLizer(serializers.ModelSerializer):
     def get_file_url(self, instance):
         # get request from contentListSeriaLizerClass then create uri 
         request = self.context['contentContext'].get('request')
+        if instance.file == '':
+            return ""
         return request.build_absolute_uri(instance.file.url)
 
 
-class RecurringMeetingRelatedField(Field):
+class ContentSerializer(Field):
     def to_representation(self, value):
         if isinstance(value, Text):
             serializer = TextSeriaLizer(instance=value)
@@ -169,11 +169,7 @@ class RecurringMeetingRelatedField(Field):
         return serializer.data
 
     def to_internal_value(self, data):
-    #     # you need to pass some identity to figure out which serializer to use
-    #     # supose you'll add 'meeting_type' key to your json
-    #     meeting_type = data.pop('meeting_type')
-        # print('data=', data)
-        print('data=',data)
+        # update field if it's on data
         obj = None
         if 'content' in  data:
             obj = Text.objects.get(id=data["id"])
@@ -186,43 +182,37 @@ class RecurringMeetingRelatedField(Field):
             obj.image = data['image']
             if data['image'] == '':
                 obj.image = 'media/courses/default_image.jpg'
-
-                
+            obj.save()
         elif 'file' in data:
-            serializer = FileSeriaLizer(data=data)
+            obj = File.objects.get(id=data["id"])
+            obj.title = data['title']
+            obj.file = data['file']
+            obj.save()
         elif 'url' in data:
-            serializer = VideoSeriaLizer(data=data)
+            obj = Video.objects.ge(id=data['id'])
+            obj.title = data['title']
+            obj.url = data['url']
         else:
             raise serializers.ValidationError('no meeting_type provided')
-        
-        # if serializer.is_valid():
-        #     obj = serializer.save()
-
-        # else:
-        #     raise serializers.ValidationError(serializer.errors)
         return obj
 
 class ContentSerializer(serializers.ModelSerializer):
-    content_type = serializers.SerializerMethodField()
-    item = RecurringMeetingRelatedField()
-    # content = serializers.SerializerMethodField(read_only=True)
+    item = ContentSerializer()
     class Meta:
         model = Content
         fields = "__all__"
     
-    def get_content_type(self, obj):
-        model_name = obj.item._meta.model_name 
-        if model_name == 'text':
-            return (TextSeriaLizer(obj.item).data)
-        if model_name == 'image':
-            return ImageSeriaLizer(obj.item, context={'contentContext' : self.context}).data
-        if model_name == 'video':
-            return (VideoSeriaLizer(obj.item).data)
-        if model_name == 'file':
-            return (FileSeriaLizer(obj.item, context={'contentContext' : self.context}).data)
-        
-        return obj.item._meta.model_name
+    # def get_content_type(self, obj):
+    #     model_name = obj.item._meta.model_name 
+    #     if model_name == 'text':
+    #         return (TextSeriaLizer(obj.item).data)
+    #     if model_name == 'image':
+    #         return ImageSeriaLizer(obj.item, context={'contentContext' : self.context}).data
+    #     if model_name == 'video':
+    #         return (VideoSeriaLizer(obj.item).data)
+    #     if model_name == 'file':
+    #         return (FileSeriaLizer(obj.item, context={'contentContext' : self.context}).data)
+    #     return obj.item._meta.model_name
     
     def update(self, instance, validated_data):
-        print('validated_data=', validated_data)
         return super().update(instance, validated_data)
