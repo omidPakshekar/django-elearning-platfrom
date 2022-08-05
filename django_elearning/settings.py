@@ -52,13 +52,13 @@ class Dev(Configuration):
 
 
     ]
-    # TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-    # # Tell nose to measure coverage on the 'foo' and 'bar' apps
-    # NOSE_ARGS = [
-    #     '--with-coverage',
-    #     '--cover-package=courses.api.views,courses.api.permissions,courses.api.serializer,courses.views',
-    # ]
+    # Tell nose to measure coverage on the 'foo' and 'bar' apps
+    NOSE_ARGS = [
+        '--with-coverage',
+        '--cover-package=courses.api.views,courses.api.permissions,courses.api.serializer,courses.views',
+    ]
 
     MIDDLEWARE = [
         'django.middleware.security.SecurityMiddleware',

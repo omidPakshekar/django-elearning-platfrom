@@ -22,8 +22,6 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [UserPermission]
 
     def get_serializer_class(self):
-        # if self.action in ["list"]:
-        #     return CourseListSeriaLizer
         return CourseSeriaLizer
 
     """
@@ -34,7 +32,6 @@ class CourseViewSet(viewsets.ModelViewSet):
         return super(CourseViewSet, self).list(*args, **kwargs)
 
     def put(self, *args, **kwargs):
-        print('hi')
         return super(CourseViewSet, self).put(*args, **kwargs)
         
 
@@ -64,13 +61,9 @@ class CourseViewSet(viewsets.ModelViewSet):
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     permission_classes = [ModulePermission]
-
-    def get_serializer_class(self):
-        return ModuleListSerializer
+    serializer_class = ModuleListSerializer
 
 class ContentViewSet(viewsets.ModelViewSet):
     queryset = Content.objects.all()
     permission_classes = [ContentPermission]
-
-    def get_serializer_class(self):
-        return ContentSerializer
+    serializer_class = ContentSerializer
