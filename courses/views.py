@@ -17,9 +17,19 @@ class CourseListView(ListView):
     context_object_name = 'object_list'
 
     def get_queryset(self):
+        qs = Course.objects.all()
+        mine = False
         if 'mine' in self.request.get_full_path():
-               return Course.objects.filter(owner=self.request.user).only('title', 'photo')
-        return Course.objects.only('title', 'photo')
+            if not self.request.user.is_authenticated:
+                return Course.objects.none()
+            mine = True
+            qs =  qs.filter(owner=self.request.user)
+        if 'q' in self.request.GET:
+            if mine:
+                qs = qs.search(query=self.request.GET['q'], owner=self.request.user).only('title', 'photo')
+            else:
+                qs = qs.search(query=self.request.GET['q']).only('title', 'photo')
+        return qs
     
 class CourseDetailView(DetailView):
     model = Course
