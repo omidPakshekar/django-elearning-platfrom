@@ -30,7 +30,6 @@ class CustomQuerySet(models.QuerySet):
 
 class CustomObjectManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
-        
         return CustomQuerySet(self.model, using=self._db)
 
     def search(self, query, owner=None, it_have_content=False):
@@ -59,7 +58,7 @@ class Course(models.Model):
     overview  = models.TextField()
     created   = models.DateTimeField(auto_now_add=True, db_index=True)
     students  = models.ManyToManyField(User, related_name='course_joined', blank=True)
-    objects     = CustomObjectManager() 
+    objects   = CustomObjectManager() 
 
     class Meta:
         ordering = ('-created',)
@@ -72,7 +71,7 @@ class Module(models.Model):
     title       = models.CharField(max_length=200)
     description = models.TextField(blank = True)
     order       = OrderField(blank=True, for_fields=['course'], db_index=True)
-
+    objects     = CustomObjectManager()  
     class Meta:
         ordering = ['order']
 
@@ -102,6 +101,7 @@ class ItemBase(models.Model):
     created_time = models.DateTimeField(auto_now_add = True)
     updated_time = models.DateTimeField(auto_now = True)
     model_content= GenericRelation(Content)
+    objects      = CustomObjectManager()
     class Meta:
         abstract = True
 
@@ -111,7 +111,7 @@ class ItemBase(models.Model):
     
 class Text(ItemBase):
     content     = models.TextField(blank=True)
-
+    
 class Image(ItemBase):
     title       = models.CharField(max_length = 250, default='')
     image       = models.ImageField(upload_to= 'images')
