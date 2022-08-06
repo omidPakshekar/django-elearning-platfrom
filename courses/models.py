@@ -1,9 +1,9 @@
-from typing import Generic
 from django.db import models
 from django.conf import settings
-from .fields import OrderField
 from django.contrib.contenttypes.fields import ContentType, GenericForeignKey, GenericRelation
+from django.db.models import Q
 
+from .fields import OrderField
 from versatileimagefield.fields import VersatileImageField, PPOIField
 
 
@@ -16,6 +16,25 @@ def get_course_image_filepath(self, filename):
 def get_default_image():
     return "courses/default_image.jpg"
 
+
+class CustomQuerySet(models.QuerySet):
+    def search(self, query, owner=None, it_have_content=False):
+        lookup = Q(title__icontains=query) 
+        if it_have_content:
+            lookup |=  Q(content_icontains=query)
+        qs = self.filter(lookup)
+        if owner is not None:
+            qs = qs.filter(owner=owner)
+            # qs = (qs | qs2).distinct()
+        return qs 
+
+class CustomObjectManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        
+        return CustomQuerySet(self.model, using=self._db)
+
+    def search(self, query, owner=None, it_have_content=False):
+        return self.get_queryset().search(query, owner=owner, it_have_content=it_have_content)        
 
 class Category(models.Model):
     title       = models.CharField(max_length=50, db_index=True)
@@ -40,7 +59,8 @@ class Course(models.Model):
     overview  = models.TextField()
     created   = models.DateTimeField(auto_now_add=True, db_index=True)
     students  = models.ManyToManyField(User, related_name='course_joined', blank=True)
-    
+    objects     = CustomObjectManager() 
+
     class Meta:
         ordering = ('-created',)
 
