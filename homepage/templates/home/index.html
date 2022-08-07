@@ -82,41 +82,19 @@
       <h1 class="services_taital"><span style="color: #fcce2d">Our</span> Courses</h1>
       <div class="services_section_2">
          <div class="row">
+            {% for object in object_list %}
             <div class="col-md-6">
                <div class="image_main">
-                  <img src="{% static 'homepage/images/img-2.png' %}" class="image_8" style="width:100%">
+                  <img src="{{object.photo.url}}" class="image_8" style="width:100%">
                   <div class="text_main">
-                     <div class="seemore_text">Art And Design</div>
+                     <div class="seemore_text">{{object.title}}</div>
                   </div>
                </div>
             </div>
-            <div class="col-md-6">
-               <div class="image_main">
-                  <img src="{% static 'homepage/images/img-3.png' %}" class="image_8" style="width:100%">
-                  <div class="text_main">
-                     <div class="seemore_text">Science</div>
-                  </div>
-               </div>
-            </div>
+            {% endfor %}
+            
          </div>
-         <div class="row">
-            <div class="col-md-6">
-               <div class="image_main">
-                  <img src="{% static 'homepage/images/img-4.png' %}" class="image_8" style="width:100%">
-                  <div class="text_main">
-                     <div class="seemore_text">Business Stady</div>
-                  </div>
-               </div>
-            </div>
-            <div class="col-md-6">
-               <div class="image_main">
-                  <img src="{% static 'homepage/images/img-5.png' %}" class="image_8" style="width:100%">
-                  <div class="text_main">
-                     <div class="seemore_text">English Speaking</div>
-                  </div>
-               </div>
-            </div>
-         </div>
+         
       </div>
    </div>            
 </div>

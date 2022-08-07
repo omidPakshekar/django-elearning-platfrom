@@ -1,6 +1,6 @@
 from django.shortcuts import render
-
-# Create your views here.
+from courses.models import Course
 
 def hompageView(request):
-    return render(request, 'home/index.html', {})
+    object_list = Course.objects.all()
+    return render(request, 'home/index.html', {'object_list' : object_list})
