@@ -12,6 +12,7 @@ from courses.models import Course
 class StudentQueryMixin(object):
     def get_queryset(self):
         qs = super(StudentQueryMixin, self).get_queryset()
+
         return qs.filter(students__in=[self.request.user])
 
 
@@ -27,7 +28,7 @@ class StudentEnrollCourseView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse_lazy('courses:course-list')
 
-class StudentCourseListView(LoginRequiredMixin,StudentQueryMixin,  ListView):
+class StudentCourseListView(LoginRequiredMixin, StudentQueryMixin, ListView):
     model = Course 
     template_name = 'students/course_list.html'
 
@@ -42,9 +43,11 @@ class StudentCourseDetailView(LoginRequiredMixin, StudentQueryMixin, DetailView)
         # get current object
         course = self.get_object()
         if 'module_id' in self.kwargs:
-            context['module'] = course.modules.get(id=self.kwargs['module_id'])
+            module = course.modules.get(id=self.kwargs['module_id'])
+            context['module'] = module
         else:
             context['module'] = course.modules.first()
+        print('hi')
         return context
     
 

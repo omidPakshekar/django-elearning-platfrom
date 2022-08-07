@@ -56,7 +56,17 @@ class CourseViewSet(viewsets.ModelViewSet):
             serializer = CourseSeriaLizer(page, many=True, context={"request": request})
         serializer = CourseSeriaLizer(courses, many=True, context={"request": request})
         return Response(serializer.data)
-
+    @action(methods=["get"], detail=False, name="your search result")
+    def search(self, request):
+        qs = self.queryset
+        if 'q' in request.GET:
+            qs = qs.search(query=request.GET['q'])
+        page = self.paginate_queryset(qs)
+        if page is not None:
+            serializer = CourseSeriaLizer(page, many=True, context={"request": request})
+        serializer = CourseSeriaLizer(qs, many=True, context={"request": request})
+        
+        return Response(serializer.data)
 
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()

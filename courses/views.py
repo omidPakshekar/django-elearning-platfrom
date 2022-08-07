@@ -26,9 +26,8 @@ class CourseListView(ListView):
             qs =  qs.filter(owner=self.request.user)
         if 'q' in self.request.GET:
             if mine:
-                qs = qs.search(query=self.request.GET['q'], owner=self.request.user).only('title', 'photo')
-            else:
-                qs = qs.search(query=self.request.GET['q']).only('title', 'photo')
+                return qs.search(query=self.request.GET['q'], owner=self.request.user).only('title', 'photo')
+            return qs.search(query=self.request.GET['q']).only('title', 'photo')
         return qs
     
 class CourseDetailView(DetailView):

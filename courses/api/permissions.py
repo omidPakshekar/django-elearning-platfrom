@@ -24,7 +24,7 @@ class UserPermission(permissions.BasePermission):
         return request.user.is_admin or request.user.is_staff
 
     def has_permission(self, request, view):
-        if view.action in ['list', 'mine', 'students']:
+        if view.action in ['list', 'mine', 'students', 'search']:
             return True
         elif view.action == 'create':
             if request.user.is_anonymous:

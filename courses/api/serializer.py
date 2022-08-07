@@ -78,7 +78,7 @@ class CourseSeriaLizer(serializers.ModelSerializer):
     modules_url = serializers.HyperlinkedIdentityField(
         source='modules.all', view_name='api:module-detail',
         lookup_field='pk', many=True, read_only=True)
-    modules = ModuleInlineSerializer(source="modules.all", many=True,   required=False)    
+    modules = ModuleInlineSerializer(source="modules.all", many=True, write_only=True, required=False)    
     
     class Meta:
         model = Course
@@ -130,7 +130,6 @@ class VideoSeriaLizer(serializers.ModelSerializer):
 
 
 class TextSeriaLizer(serializers.ModelSerializer):
-    
     class Meta:
         model = Text
         fields = "__all__"
